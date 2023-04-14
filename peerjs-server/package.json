@@ -1,0 +1,14 @@
+{
+  "name": "peerjs-server",
+  "version": "1.0.0",
+  "description": "a custom peerjs server implementation",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "jemmec",
+  "license": "ISC",
+  "dependencies": {
+    "peer": "^1.0.0"
+  }
+}
