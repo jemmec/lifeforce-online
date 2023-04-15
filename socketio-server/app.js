@@ -30,9 +30,32 @@ const planeswalkers = [
     "Ashiok, Nightmare Weaver",
 ];
 
-
 function p(log) {
     console.log(`Socket.io:${log} `);
+}
+
+function createSettings() {
+    return {
+        startingLife: 40,
+    };
+}
+
+function createRoom(roomId) {
+    return {
+        id: roomId,
+        users: [],
+        settings: createSettings(),
+    };
+}
+
+function createUser(id, host) {
+    return {
+        id: id,
+        isHost: host,
+        color: '#ff00ff',
+        name: planeswalkers[Math.floor(Math.random() * planeswalkers.length)],
+        life: 40,
+    };
 }
 
 //meta-data
@@ -44,18 +67,10 @@ io.on("connection", socket => {
     //Room / User event
     socket.on('new_room', (roomId, callback) => {
         socket.join(roomId);
-        //Add user to room
-        const user = {
-            id: socket.id,
-            isHost: true,
-            color: '#ff00ff',
-            name: planeswalkers[Math.floor(Math.random() * planeswalkers.length)],
-            life: 40,
-        };
-        const room = {
-            id: roomId,
-            users: [user]
-        };
+        //Add user to room (as host)
+        const user = createUser(socket.id, true);
+        const room = createRoom(roomId);
+        room.users.push(user);
         rooms.push(room);
         p(`Room created ${room.id}`);
         callback(room);
@@ -67,14 +82,8 @@ io.on("connection", socket => {
         if (room) {
             //join the room
             socket.join(room.id);
-            //Add user to room
-            const user = {
-                id: socket.id,
-                isHost: false,
-                color: '#ff00ff',
-                name: planeswalkers[Math.floor(Math.random() * planeswalkers.length)],
-                life: 40,
-            };
+            //Add user to room (non-host)
+            const user = createUser(socket.id, false);
             room.users.push(user);
             //broadcast joined_room to all
             io.to(room.id).emit('joined_room', room, user);
@@ -113,6 +122,10 @@ io.on("connection", socket => {
         } else {
             //Throw not in room error
         }
+    });
+
+    socket.on('update_settings', (settings, callback) => {
+
     });
 
     //User

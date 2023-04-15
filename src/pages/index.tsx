@@ -1,6 +1,7 @@
 import { RoomContext, useRoom } from '@/contexts/room-context';
 import { useSocket } from '@/contexts/socket-context';
 import { useMe } from '@/hooks/use-me';
+import { useSettings } from '@/hooks/use-settings';
 import { randomId } from '@/utils/id-generator';
 import Head from 'next/head';
 import { ReactNode, useEffect, useState } from 'react';
@@ -8,6 +9,7 @@ import { ReactNode, useEffect, useState } from 'react';
 export type Room = {
   id: string,
   users: User[],
+  settings: Settings,
 }
 
 export type User = {
@@ -16,6 +18,10 @@ export type User = {
   color: string,
   name: string,
   life: number,
+}
+
+export type Settings = {
+  startingLife: number,
 }
 
 export type SocketError = {
@@ -131,6 +137,9 @@ export function Room() {
   const { room, setRoom } = useRoom();
   const { me } = useMe();
 
+  //TODO: Add me to a context so that it won't be null
+  
+
   //TODO move to hook like useRoomEvents
   const { socket } = useSocket();
   useEffect(() => {
@@ -164,6 +173,7 @@ export function Room() {
       <div>
         <h2>Room: {room.id}</h2>
         <UserList />
+        <RoomSettings/>
         <button onClick={handleLeaveRoom}>leave</button>
         <button disabled={!me?.isHost} onClick={handleStartGame}>start game</button>
       </div>
@@ -171,9 +181,25 @@ export function Room() {
   )
 }
 
+export function RoomSettings() {  
+  const { room, setRoom } = useRoom();
+  
+  return (
+    <>
+      <div>
+        <div>
+          <div>{`Starting life: `}</div>
+          <input value={room.settings.startingLife} onChange={() => { }} />
+        </div>
+      </div>
+    </>
+  )
+}
+
 export function UserList() {
   const { room, setRoom } = useRoom();
-  const { me } = useMe();
+  const {me} = useMe();
+
   return (
     <>
       <div>
