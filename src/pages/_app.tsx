@@ -1,3 +1,4 @@
+import { SocketProvider } from '@/contexts/socket-context'
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-theme'
 import type { AppProps } from 'next/app'
@@ -8,11 +9,13 @@ const inter = Inter({ subsets: ['latin'] })
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <ThemeProvider>
-        <div className={inter.className}>
-          <Component {...pageProps} />
-        </div>
-      </ThemeProvider>
+      <SocketProvider>
+        <ThemeProvider>
+          <div className={inter.className}>
+            <Component {...pageProps} />
+          </div>
+        </ThemeProvider>
+      </SocketProvider>
     </>
   );
 }

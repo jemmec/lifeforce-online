@@ -1,8 +1,27 @@
-import { usePeer } from '@/hooks/use-peer';
+import { RoomContext, useRoom } from '@/contexts/room-context';
+import { useSocket } from '@/contexts/socket-context';
+import { useMe } from '@/hooks/use-me';
 import { randomId } from '@/utils/id-generator';
-import Head from 'next/head'
-import { useRouter } from 'next/router';
-import { ReactNode, useEffect, useState } from 'react'
+import Head from 'next/head';
+import { ReactNode, useEffect, useState } from 'react';
+
+export type Room = {
+  id: string,
+  users: User[],
+}
+
+export type User = {
+  id: string,
+  isHost: boolean,
+  color: string,
+  name: string,
+  life: number,
+}
+
+export type SocketError = {
+  code: number;
+  message: string;
+}
 
 export default function Index() {
   return (
@@ -14,12 +33,13 @@ export default function Index() {
       </Head>
       <main>
         <Layout>
-          <Default />
+          <_ />
         </Layout>
       </main>
     </>
   )
 }
+
 
 type LayoutProps = {
   children: ReactNode;
@@ -30,6 +50,7 @@ export function Layout({ children }: LayoutProps) {
     <>
       <div className='fullscreen'>
         <div className='app-container'>
+          <h2>Lifeforce</h2>
           {children}
         </div>
       </div>
@@ -52,111 +73,125 @@ export function Layout({ children }: LayoutProps) {
   )
 }
 
-export type Lobby = {
-  id: string;
-  myId: string;
-  amHost: boolean;
-};
 
-export function Default() {
-  //Get route
-  const router = useRouter();
-  const { id } = router.query;
+function _() {
+  const { socket } = useSocket();
+  const [room, setRoom] = useState<Room | null>(null);
 
-  //Lobby state
-  const [lobby, setLobby] = useState<Lobby | null>(null)
-
-  //Handle routing to game
-  useEffect(() => {
-    if (id && id !== '') {
-      handleJoinLobby(id as string);
+  function handleNewRoom() {
+    if (socket) {
+      //Start room with randomId
+      const roomId = randomId();
+      socket.emit('new_room', roomId, (room: Room) => {
+        setRoom(room);
+      });
     }
-  }, [id])
-
-  function handleJoinLobby(id: string) {
-    setLobby({ id, myId: randomId(), amHost: false });
   }
 
-  function handleNewLobby() {
-    // const id = randomId();
-    const id = "123456";
-    setLobby({ id, myId: id, amHost: true });
+  function handleJoinRoom(roomId: string) {
+    if (socket) {
+      socket.emit('join_room', roomId, (room: Room) => {
+        setRoom(room);
+      });
+    }
   }
 
-  if (!lobby)
-    return <Home onNewLobby={handleNewLobby} />
-  else
-    return <Lobby lobby={lobby} />
-
-  return <Game />
+  if (!socket && !room) return <div>{`Initalizing...`}</div>
+  else if (socket && !room) return <Home onNewRoom={handleNewRoom} onJoinRoom={handleJoinRoom} />
+  else if (room) return (
+    <RoomContext.Provider value={{ room, setRoom }}>
+      <Room />
+    </RoomContext.Provider>
+  )
+  else return <div>{`Something went wrong.`}</div>
 }
 
 type HomeProps = {
-  onNewLobby: () => void;
+  onNewRoom: () => void;
+  onJoinRoom: (roomId: string) => void;
 }
 
-export function Home({ onNewLobby }: HomeProps) {
+export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
+  const [roomId, setRoomId] = useState<string>('');
   return (
     <>
       <Head>
         <title>Lifeforce</title>
       </Head>
       <div className='home'>
-        <div>lifeforce</div>
-        <button onClick={onNewLobby}>new lobby</button>
+        <button onClick={onNewRoom}>{`new room`}</button>
+        <input value={roomId} onChange={(e: any) => setRoomId(e.target.value)} />
+        <button onClick={() => onJoinRoom(roomId)}>{`join room`}</button>
       </div>
     </>
   )
 }
 
-type LobbyProps = {
-  lobby: Lobby;
-}
 
-export function Lobby({ lobby }: LobbyProps) {
-  const { myPeer } = usePeer(lobby.id);
+export function Room() {
+  const { room, setRoom } = useRoom();
+  const { me } = useMe();
 
+  //TODO move to hook like useRoomEvents
+  const { socket } = useSocket();
   useEffect(() => {
-    if (myPeer) {
-
+    if (socket) {
+      socket.on('joined_room', (room: Room, user: User) => {
+        setRoom(room);
+      });
+      socket.on('left_room', (room: Room, user: User) => {
+        setRoom(room);
+      });
     }
-  }, [myPeer])
+  }, [socket]);
 
-  if (!myPeer)
-    return (
-      <>
-        <Head>
-          <title>Lifeforce | connecting...</title>
-        </Head>
-        <div>
-          connecting...
-        </div>
-      </>
-    );
+  function handleLeaveRoom() {
+    if (socket) {
+      socket.emit('leave_room', room.id, () => {
+        setRoom(null);
+      });
+    }
+  }
+
+  function handleStartGame() {
+
+  }
 
   return (
     <>
       <Head>
-        <title>{`Lifeforce | Lobby ${lobby.id}`}</title>
+        <title>Lifeforce | Room</title>
       </Head>
       <div>
-        <div>amHost: {lobby.amHost.toString()}</div>
-        <div>lobbyId: {lobby.id}</div>
-        <div>myId: {lobby.myId}</div>
-        <input type='text' value={`http://localhost:3000/?id=${lobby.id}`} onChange={()=>{}} />
-        <button>start game</button>
+        <h2>Room: {room.id}</h2>
+        <UserList />
+        <button onClick={handleLeaveRoom}>leave</button>
+        <button disabled={!me?.isHost} onClick={handleStartGame}>start game</button>
       </div>
     </>
   )
 }
 
-
-export function Game() {
+export function UserList() {
+  const { room, setRoom } = useRoom();
+  const { me } = useMe();
   return (
     <>
       <div>
-
+        {
+          room.users.map((user: User) => {
+            const isMe = user === me;
+            return (
+              <>
+                <div key={user.id}>
+                  <p>{isMe ? `(me)` : ''}{user.name}</p>
+                </div>
+              </>
+            );
+          })
+        }
       </div>
     </>
   )
 }
+

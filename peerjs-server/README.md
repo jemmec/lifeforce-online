@@ -1,2 +1,0 @@
-# Development server for PeerJS
-
