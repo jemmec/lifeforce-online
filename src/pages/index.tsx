@@ -127,7 +127,6 @@ export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
   )
 }
 
-
 export function Room() {
   const { room, setRoom } = useRoom();
   const { me } = useMe();

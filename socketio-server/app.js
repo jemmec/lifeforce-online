@@ -99,10 +99,15 @@ io.on("connection", socket => {
                 if (user.isHost) {
                     const newHost = room.users[0];
                     newHost.isHost = true;
-                    room.splice(0, 1, newHost);
+                    room.users.splice(0, 1, newHost);
                 }
                 //broadcast left_room to all
                 io.to(room.id).emit('left_room', room, user);
+            } else {
+                //teminate room
+                p(`Room terminated ${room.id}`);
+                const index = rooms.indexOf(room);
+                rooms.splice(index, 1);
             }
             callback();
         } else {
