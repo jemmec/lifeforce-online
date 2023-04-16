@@ -1,7 +1,5 @@
 import { RoomContext, useRoom } from '@/contexts/room-context';
 import { useSocket } from '@/contexts/socket-context';
-import { useMe } from '@/hooks/use-me';
-import { useSettings } from '@/hooks/use-settings';
 import { randomId } from '@/utils/id-generator';
 import Head from 'next/head';
 import { ReactNode, useEffect, useState } from 'react';
