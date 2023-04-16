@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc && gts fix",
-    "start": "node build/src/index.js",
+    "build": "tsc",
+    "start": "tsc && node build/src/index.js",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
@@ -14,8 +14,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/koa": "^2.13.6",
+    "@types/node": "^14.11.2",
     "gts": "^3.1.1",
-    "typescript": "^5.0.4",
-    "@types/node": "^14.11.2"
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "koa": "^2.14.2",
+    "socket.io": "^4.6.1"
   }
 }
