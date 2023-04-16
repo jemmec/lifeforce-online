@@ -259,8 +259,12 @@ export function Room() {
         <div className='room'>
           {me.isHost ? <RoomLink /> : <></>}
           <div className='lobby'>
-            <Users />
-            <Settings />
+            <div className='card'>
+              <Users />
+            </div>
+            <div className='card'>
+              <Settings />
+            </div>
           </div>
           <div className='buttons'>
             <button onClick={handleLeaveRoom}>leave</button>
@@ -278,9 +282,16 @@ export function Room() {
               gap: var(--gap-lg);
             }
             .lobby{
+              width: 100%;
               display: flex;
               flex-direction: row;
-              gap: 24px;
+              gap: var(--gap-lg);
+            }
+            .card{
+              background-color: rgba(20,20,20,0.5);
+              border-radius: var(--border-radius);
+              padding: 18px;
+              width: 50%;
             }
             .buttons{
               display: flex;
