@@ -62,7 +62,26 @@ function createUser(id, host) {
 const rooms = [];
 
 io.on("connection", socket => {
+    //Socket connection event
     p(`Socket connected ${socket.id}`)
+
+    //builtin events
+
+    socket.on('disconnect', (reason) => {
+        if (socket.rooms.length > 1) {
+            //handle leave room
+        }
+    });
+
+    socket.conn.on("close", (reason) => {
+        if (socket.rooms.length > 1) {
+            //handle leave room
+        }
+    });
+
+    socket.on("error", (err) => {
+        p(`Socket error: ${err}`);
+    });
 
     //Room / User event
     socket.on('new_room', (roomId, callback) => {
@@ -137,6 +156,11 @@ io.on("connection", socket => {
 
     //Game Events
 
+    socket.on('start', (callback) => {
+
+
+
+    });
 
 
 

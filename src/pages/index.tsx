@@ -81,8 +81,15 @@ export function Layout({ children }: LayoutProps) {
 
 
 function _() {
+  //the app socket
   const { socket } = useSocket();
+
+  //the room the user is currently in
   const [room, setRoom] = useState<Room | null>(null);
+
+  //the current user inside of a room
+  //Only exists when room has been defined
+  const [me, setMe] = useState<User | null>(null);
 
   function handleNewRoom() {
     if (socket) {
@@ -102,10 +109,19 @@ function _() {
     }
   }
 
+
+  useEffect(() => {
+    if (socket && room) {
+      const user = room.users.find(x => x.id === socket.id);
+      if (user)
+        setMe(user);
+    }
+  }, [socket, room])
+
   if (!socket && !room) return <div>{`Initalizing...`}</div>
   else if (socket && !room) return <Home onNewRoom={handleNewRoom} onJoinRoom={handleJoinRoom} />
-  else if (room) return (
-    <RoomContext.Provider value={{ room, setRoom }}>
+  else if (room && me) return (
+    <RoomContext.Provider value={{ me, room, setRoom }}>
       <Room />
     </RoomContext.Provider>
   )
@@ -134,12 +150,7 @@ export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
 }
 
 export function Room() {
-  const { room, setRoom } = useRoom();
-  const { me } = useMe();
-
-  //TODO: Add me to a context so that it won't be null
-  
-
+  const { me, room, setRoom } = useRoom();
   //TODO move to hook like useRoomEvents
   const { socket } = useSocket();
   useEffect(() => {
@@ -173,23 +184,22 @@ export function Room() {
       <div>
         <h2>Room: {room.id}</h2>
         <UserList />
-        <RoomSettings/>
+        <RoomSettings />
         <button onClick={handleLeaveRoom}>leave</button>
-        <button disabled={!me?.isHost} onClick={handleStartGame}>start game</button>
+        <button disabled={!me.isHost} onClick={handleStartGame}>start game</button>
       </div>
     </>
   )
 }
 
-export function RoomSettings() {  
-  const { room, setRoom } = useRoom();
-  
+export function RoomSettings() {
+  const { me, room, setRoom } = useRoom();
   return (
     <>
       <div>
         <div>
           <div>{`Starting life: `}</div>
-          <input value={room.settings.startingLife} onChange={() => { }} />
+          <input disabled={!me.isHost} value={room.settings.startingLife} onChange={() => { }} />
         </div>
       </div>
     </>
@@ -197,9 +207,7 @@ export function RoomSettings() {
 }
 
 export function UserList() {
-  const { room, setRoom } = useRoom();
-  const {me} = useMe();
-
+  const { me, room, setRoom } = useRoom();
   return (
     <>
       <div>
@@ -207,11 +215,9 @@ export function UserList() {
           room.users.map((user: User) => {
             const isMe = user === me;
             return (
-              <>
-                <div key={user.id}>
-                  <p>{isMe ? `(me)` : ''}{user.name}</p>
-                </div>
-              </>
+              <div key={user.id}>
+                <p>{isMe ? `(me)` : ''}{user.name}</p>
+              </div>
             );
           })
         }
