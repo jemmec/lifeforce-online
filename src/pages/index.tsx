@@ -64,7 +64,7 @@ export function Layout({ children }: LayoutProps) {
     <>
       <div className='fullscreen'>
         <div className='app-container'>
-          <h2>Lifeforce</h2>
+          <h1>{`Lifeforce`}</h1>
           {children}
         </div>
       </div>
@@ -79,7 +79,13 @@ export function Layout({ children }: LayoutProps) {
             align-items: center;
           }
           .app-container{
-            max-width: 1280px;
+            max-width: 720px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: var(--gap-lg);
           }
         `}
       </style>
@@ -89,15 +95,15 @@ export function Layout({ children }: LayoutProps) {
 
 
 function _() {
-  //try to get the roomId query param
+
+  //get roomId from query
   const router = useRouter();
   const { roomId } = router.query;
   //the app socket
   const { socket } = useSocket();
   //the room the user is currently in
   const [room, setRoom] = useState<Room | null>(null);
-  //the current user inside of a room
-  //Only exists when room has been defined
+  //the current user inside of a room only exists when room has been defined
   const [me, setMe] = useState<User | null>(null);
 
   function handleRoomChange(newRoom: Room | null) {
@@ -173,15 +179,40 @@ export function Home({ onNewRoom }: HomeProps) {
         <title>{`Lifeforce`}</title>
       </Head>
       <div className='home'>
-        <button onClick={onNewRoom}>{`new room`}</button>
+        <button onClick={onNewRoom}>{`New Game`}</button>
       </div>
+      <SmallText />
+      <style jsx>
+        {`
+          .home{
+            padding: 12px;
+          }
+        `}
+      </style>
+    </>
+  )
+}
+
+export function SmallText() {
+  return (
+    <>
+      <div className='small-text'>
+        {`Lifeforce is an open source project created by @jemmec. Sit minim cupidatat in duis esse do. Ad exercitation tempor ipsum Lorem anim excepteur elit ut nulla nostrud. Quis eu et nostrud excepteur proident nulla qui ut ullamco dolore excepteur.`}
+      </div>
+      <style jsx>
+        {`
+          .small-text{
+            opacity: 0.35;
+            font-size: 12px;
+            text-align: center;
+          }
+        `}
+      </style>
     </>
   )
 }
 
 export function Room() {
-  //TODO move to hook like useRoomEvents
-
   const { me, room, setRoom, setSettings } = useRoom();
   const { socket } = useSocket();
 
@@ -206,7 +237,6 @@ export function Room() {
 
   function handleStartGame() {
     if (socket) {
-      //Star the game
       socket.emit('start_game', room.id);
     }
   }
@@ -222,15 +252,40 @@ export function Room() {
         <Head>
           <title>{`Lifeforce | Room`}</title>
         </Head>
-        <div>
-          <RoomLink />
-          <Users />
-          <Settings />
-          <button onClick={handleLeaveRoom}>leave</button>
-          {
-            me.isHost ? <button onClick={handleStartGame}>start game</button> : <></>
-          }
+        <div className='room'>
+          {me.isHost ? <RoomLink /> : <></>}
+          <div className='lobby'>
+            <Users />
+            <Settings />
+          </div>
+          <div className='buttons'>
+            <button onClick={handleLeaveRoom}>leave</button>
+            {me.isHost ? <button onClick={handleStartGame}>start game</button> : <></>}
+          </div>
         </div>
+        <style jsx>
+          {`
+            .room{
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              align-items: center;
+              gap: var(--gap-lg);
+            }
+            .lobby{
+              display: flex;
+              flex-direction: row;
+              gap: 24px;
+            }
+            .buttons{
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              gap: var(--gap-lg)
+            }
+          `}
+        </style>
       </>
     )
 
@@ -252,11 +307,34 @@ export function RoomLink() {
 
   return (
     <>
-      <div>
-        <a href={`/?roomId=${room.id}`}>
+      <div className='room-link'>
+        <div>{`Share the link:`}</div>
+        <div className='link'>
           {`http://localhost:3000/?roomId=${room.id}`}
-        </a>
+        </div>
       </div>
+      <style jsx>
+        {`
+          .room-link{
+            width: 100%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--gap-sm);
+          }
+          .link{
+            text-decoration: underline;
+            font-weight: 600;
+            background-color: rgb(194, 194, 194);
+            color: rgb(20,20,20);
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+          }
+        `}
+      </style>
     </>
   )
 }
@@ -268,18 +346,16 @@ export function Settings() {
 
   function handleSettingsPropChange(prop: string, value: any) {
     if (socket) {
-      //update prop
       const settings = { ...room.settings, [prop]: value };
-      //update local state
       setSettings(settings);
-      //broadcast settings change to all sockets
       socket.emit('update_settings', room.id, settings,)
     }
   }
 
   return (
     <>
-      <div>
+      <div className='settings'>
+        <h2>{`Game Settings`}</h2>
         <div>
           <div>{`Starting life: `}</div>
           <div>{room.settings.startingLife}</div>
@@ -293,6 +369,13 @@ export function Settings() {
           />
         </div>
       </div>
+      <style jsx>
+        {`
+          .settings{
+
+          }
+        `}
+      </style>
     </>
   )
 }
@@ -302,16 +385,18 @@ export function Users() {
   return (
     <>
       <div>
-        {
-          room.users.map((user: User) => {
-            const isMe = user === me;
-            return (
-              <div key={user.id}>
-                <p>{isMe ? `(me)` : ''}{user.name}</p>
-              </div>
-            );
-          })
-        }
+        <div>
+          {
+            room.users.map((user: User) => {
+              const isMe = user === me;
+              return (
+                <div key={user.id}>
+                  <p>{isMe ? `(me)` : ''}{user.name}</p>
+                </div>
+              );
+            })
+          }
+        </div>
       </div>
     </>
   )

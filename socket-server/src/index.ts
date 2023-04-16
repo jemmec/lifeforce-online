@@ -11,8 +11,6 @@ const io = new Server(httpServer, {
   },
 });
 
-//Data
-
 const passphrase = "swordfish";
 
 const planeswalkers = [
@@ -59,8 +57,6 @@ function leaveRoom(socket: Socket, roomId: string) {
   room.removeUser(user);
   //if there is no more users in the room, terminate room
   if (room.isEmpty()) {
-    //teminate room
-    p(`Room terminated ${room.id}`);
     const index = rooms.indexOf(room);
     rooms.splice(index, 1);
     return;
@@ -70,6 +66,7 @@ function leaveRoom(socket: Socket, roomId: string) {
 }
 
 io.on('connection', socket => {
+
   p(`Socket connected ${socket.id}`);
 
   socket.on("disconnecting", () => {
@@ -92,7 +89,6 @@ io.on('connection', socket => {
     p(`Socket error: ${err}`);
   });
 
-  //Room / User event
   socket.on('new_room', (roomId: string, callback: any) => {
     socket.join(roomId);
     const room: Room = new Room(roomId, [], new Settings());
@@ -100,7 +96,6 @@ io.on('connection', socket => {
       new User(socket.id, true, '#fff', randomName())
     );
     rooms.push(room);
-    p(`Room created ${room.id}`);
     callback(room);
   });
 
@@ -112,9 +107,7 @@ io.on('connection', socket => {
     socket.join(room.id);
     //Add user to room (non-host)
     const user = new User(socket.id, false, '#fff', randomName());
-    room.addUser(
-      user
-    );
+    room.addUser(user);
     //broadcast joined_room to all
     io.to(room.id).emit('updated_room', room);
     callback(room);
@@ -133,8 +126,6 @@ io.on('connection', socket => {
     socket.to(room.id).emit('updated_settings', settings);
   });
 
-  //User
-
   socket.on('update_user', (roomId: string, user: User) => {
     const room = rooms.find(x => x.id === roomId);
     if (!room) return;
@@ -142,8 +133,6 @@ io.on('connection', socket => {
     //broadcast to all (but me) that user has updated
     socket.to(room.id).emit('updated_room', room);
   });
-
-  //Game Events
 
   socket.on('start_game', (roomId: string) => {
     const room = rooms.find(x => x.id === roomId);

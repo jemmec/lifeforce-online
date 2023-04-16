@@ -1,9 +1,10 @@
 :root {
   --max-width: 1280px;
-  --border-radius: 12px;
+  --border-radius: 8px;
   --foreground: rgb(210, 210, 210);
-  --background-start: rgb(35, 35, 35);
-  --background-end: rgb(15, 15, 15);
+
+  --gap-sm: 6px;
+  --gap-lg: 12px
 }
 
 * {
@@ -20,12 +21,24 @@ body {
 
 body {
   color: var(--foreground);
-  background: linear-gradient(to bottom,
-      transparent,
-      var(--background-end)) var(--background-start);
+  background: linear-gradient(180deg, #484c17 0%, #01100d 100%);
 }
 
 a {
   color: inherit;
   text-decoration: none;
 }
+
+button {
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background-color: rgb(194, 194, 194);
+  color: rgb(20, 20, 20);
+  padding: 6px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+button:hover {}
