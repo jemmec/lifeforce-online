@@ -38,6 +38,10 @@ const planeswalkers = [
   "Ashiok, Nightmare Weaver",
 ];
 
+function randomName(): string {
+  return planeswalkers[Math.floor(Math.random() * planeswalkers.length)];
+}
+
 const rooms: Room[] = [];
 
 function p(log: string) {
@@ -70,7 +74,7 @@ io.on('connection', socket => {
     socket.join(roomId);
     const room: Room = new Room(roomId, [], new Settings());
     room.addUser(
-      new User(socket.id, true, '#fff', planeswalkers[Math.floor(Math.random() * planeswalkers.length)], 40)
+      new User(socket.id, true, '#fff', randomName())
     );
     rooms.push(room);
     p(`Room created ${room.id}`);
@@ -84,12 +88,12 @@ io.on('connection', socket => {
     //join the room
     socket.join(room.id);
     //Add user to room (non-host)
-    const user = new User(socket.id, false, '#fff', planeswalkers[Math.floor(Math.random() * planeswalkers.length)], 40);
+    const user = new User(socket.id, false, '#fff', randomName());
     room.addUser(
       user
     );
     //broadcast joined_room to all
-    io.to(room.id).emit('updated_room', room, user);
+    io.to(room.id).emit('updated_room', room);
     callback(room);
   });
 
@@ -113,7 +117,7 @@ io.on('connection', socket => {
       return;
     }
     //broadcast left_room to all
-    io.to(room.id).emit('updated_room', room, user);
+    io.to(room.id).emit('updated_room', room);
     callback();
   });
 
@@ -132,14 +136,54 @@ io.on('connection', socket => {
     if (!room) return;
     room.updateUser(user);
     //broadcast to all (but me) that user has updated
-    socket.to(room.id).emit('updated_room', room, user);
+    socket.to(room.id).emit('updated_room', room);
   });
 
   //Game Events
 
-  socket.on('start', (callback: any) => {
-
+  socket.on('start_game', (roomId: string) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    //Start the game
+    room.startGame();
+    p(`Game has started in room ${room.id}`);
+    io.to(room.id).emit('updated_room', room);
   });
+
+  socket.on("end_game", (roomId: string) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    room.endGame();
+    p(`Game has stopped in room ${room.id}`)
+    io.to(room.id).emit('updated_room', room);
+  });
+
+  socket.on("reset_game", (roomId: string) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    room.resetGame();
+    p(`Game has reset in room ${room.id}`)
+    io.to(room.id).emit('updated_room', room);
+  });
+
+  socket.on('mod_life', (roomId: string, value: number) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    if (!room.gameState) return;
+    //update game state
+    room.gameState.modUserLife(socket.id, value);
+    socket.to(room.id).emit('updated_gamestate', room.gameState);
+  });
+
+  socket.on('mod_other_life', (roomId: string, value: number) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    if (!room.gameState) return;
+    //update game state
+    room.gameState.modOtherLife(socket.id, value);
+    io.to(room.id).emit('updated_gamestate', room.gameState);
+  });
+
 });
 
 httpServer.listen(3001);

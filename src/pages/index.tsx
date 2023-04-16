@@ -1,3 +1,4 @@
+import { GameContext, useGame } from '@/contexts/game-context';
 import { RoomContext, useRoom } from '@/contexts/room-context';
 import { useSocket } from '@/contexts/socket-context';
 import { randomId } from '@/utils/id-generator';
@@ -8,6 +9,7 @@ export type Room = {
   id: string,
   users: User[],
   settings: Settings,
+  gameState: GameState | null;
 }
 
 export type User = {
@@ -15,7 +17,6 @@ export type User = {
   isHost: boolean,
   color: string,
   name: string,
-  life: number,
 }
 
 export type Settings = {
@@ -25,6 +26,15 @@ export type Settings = {
 export type SocketError = {
   code: number;
   message: string;
+}
+
+export type GameState = {
+  playerStates: PlayerState[];
+}
+
+export type PlayerState = {
+  userId: string;
+  life: number;
 }
 
 export default function Index() {
@@ -43,7 +53,6 @@ export default function Index() {
     </>
   )
 }
-
 
 type LayoutProps = {
   children: ReactNode;
@@ -150,7 +159,7 @@ export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
   return (
     <>
       <Head>
-        <title>Lifeforce</title>
+        <title>{`Lifeforce`}</title>
       </Head>
       <div className='home'>
         <button onClick={onNewRoom}>{`new room`}</button>
@@ -162,9 +171,11 @@ export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
 }
 
 export function Room() {
-  const { me, room, setRoom, setSettings } = useRoom();
   //TODO move to hook like useRoomEvents
+
+  const { me, room, setRoom, setSettings } = useRoom();
   const { socket } = useSocket();
+
   useEffect(() => {
     if (socket) {
       socket.on('updated_room', (room: Room) => {
@@ -185,37 +196,60 @@ export function Room() {
   }
 
   function handleStartGame() {
-
+    if (socket) {
+      //Star the game
+      socket.emit('start_game', room.id);
+    }
   }
+
+  function handleGameStateChange(gameState: GameState) {
+    //Push gamestate changes up to room
+    setRoom({ ...room, gameState });
+  }
+
+  if (!room.gameState)
+    return (
+      <>
+        <Head>
+          <title>{`Lifeforce | Room`}</title>
+        </Head>
+        <div>
+          <h3>{`Room: ${room.id}`}</h3>
+          <Users />
+          <Settings />
+          <button onClick={handleLeaveRoom}>leave</button>
+          {
+            me.isHost ? <button onClick={handleStartGame}>start game</button> : <></>
+          }
+        </div>
+      </>
+    )
 
   return (
     <>
-      <Head>
-        <title>Lifeforce | Room</title>
-      </Head>
-      <div>
-        <h2>Room: {room.id}</h2>
-        <UserList />
-        <RoomSettings />
-        <button onClick={handleLeaveRoom}>leave</button>
-        <button disabled={!me.isHost} onClick={handleStartGame}>start game</button>
-      </div>
+      <GameContext.Provider
+        value={{
+          gameState: room.gameState,
+          setGameState: handleGameStateChange
+        }}>
+        <Game />
+      </GameContext.Provider>
     </>
   )
 }
 
-export function RoomSettings() {
+export function Settings() {
 
   const { socket } = useSocket();
   const { me, room, setSettings } = useRoom();
 
   function handleSettingsPropChange(prop: string, value: any) {
     if (socket) {
-      //update pop
+      //update prop
       const settings = { ...room.settings, [prop]: value };
       //update local state
       setSettings(settings);
-      //broadcast settings change to sockets
+      //broadcast settings change to all sockets
       socket.emit('update_settings', room.id, settings,)
     }
   }
@@ -229,10 +263,10 @@ export function RoomSettings() {
           <input
             type="range"
             min={1}
-            max={999}
+            max={80}
             disabled={!me.isHost}
             value={room.settings.startingLife}
-            onChange={(e) => handleSettingsPropChange('startingLife', e.target.value)}
+            onChange={(e) => handleSettingsPropChange('startingLife', Number.parseInt(e.target.value))}
           />
         </div>
       </div>
@@ -240,7 +274,7 @@ export function RoomSettings() {
   )
 }
 
-export function UserList() {
+export function Users() {
   const { me, room } = useRoom();
   return (
     <>
@@ -260,3 +294,96 @@ export function UserList() {
   )
 }
 
+export function Game() {
+  const { socket } = useSocket();
+  const { gameState, setGameState } = useGame();
+  const { me, room } = useRoom();
+  const [myState, setMyState] = useState<PlayerState | null>();
+
+  useEffect(() => {
+    const ms = gameState.playerStates.find(x => x.userId === me.id);
+    if (ms)
+      setMyState(ms);
+  }, [me, gameState]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('updated_gamestate', (gameState: GameState) => {
+        setGameState(gameState);
+      });
+    }
+  }, [socket])
+
+  function handleModLife(value: number) {
+    if (socket && myState) {
+      //update local state
+      setMyState({ ...myState, life: myState.life += value });
+      socket.emit('mod_life', room.id, value);
+    }
+  }
+
+  function handleModOtherLife(value: number) {
+    if (socket) {
+      //update local state
+
+      socket.emit('mod_other_life', room.id, value);
+    }
+  }
+
+  function handleResetGame() {
+    if (socket) {
+      socket.emit('reset_game', room.id);
+    }
+  }
+
+  function handleBackToLobby() {
+    if (socket) {
+      socket.emit('end_game', room.id);
+    }
+  }
+
+  if (!myState) return <div>{`Game in progress...`}</div>
+
+  return (
+    <>
+      <Head>
+        <title>{`Lifeforce | In Game`}</title>
+      </Head>
+      <div>
+        <div>
+          {
+            gameState.playerStates.map(playerState => {
+              //Get user info from the room
+              const user = room.users.find(x => x.id === playerState.userId);
+              if (!user || user === me) return <></>;
+              return (
+                <>
+                  <div key={playerState.userId} >
+                    <div>{user.name}</div>
+                    <h3>{playerState.life}</h3>
+                  </div>
+                </>
+              );
+            })
+          }
+        </div>
+        <div>
+          <button onClick={() => handleModOtherLife(-1)}>{`decrease other`}</button>
+          <button onClick={() => handleModOtherLife(+1)}>{`increase other`}</button>
+        </div>
+        <div>
+          <button onClick={() => handleModLife(-1)}>{`decrease`}</button>
+          <h1>{myState.life}</h1>
+          <button onClick={() => handleModLife(+1)}>{`increase`}</button>
+        </div>
+        {
+          me.isHost ? <>
+            <button onClick={handleResetGame}>{`reset`}</button>
+            <button onClick={handleBackToLobby}>{`back to lobby`}</button>
+          </> : <></>
+        }
+      </div>
+    </>
+  )
+
+}

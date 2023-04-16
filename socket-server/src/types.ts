@@ -1,10 +1,9 @@
-import { UIEventHandler, useId } from "react";
-
 export class Room {
 
     id: string;
     users: User[];
     settings: Settings;
+    gameState: GameState | null;
 
     constructor(
         id: string,
@@ -14,6 +13,7 @@ export class Room {
         this.id = id;
         this.users = users;
         this.settings = settings;
+        this.gameState = null;
     }
 
     public addUser(user: User) {
@@ -48,7 +48,21 @@ export class Room {
     }
 
     public isEmpty(): boolean { return this.users.length === 0 };
+
+
+    public startGame() {
+        this.gameState = new GameState(this);
+    }
+
+    public endGame() {
+        this.gameState = null;
+    }
+
+    public resetGame() {
+        this.gameState = new GameState(this);
+    }
 }
+
 
 export class User {
 
@@ -56,20 +70,17 @@ export class User {
     isHost: boolean;
     color: string;
     name: string;
-    life: number;
 
     constructor(
         id: string,
         isHost: boolean,
         color: string,
-        name: string,
-        life: number,
+        name: string
     ) {
         this.id = id;
         this.isHost = isHost;
         this.color = color;
         this.name = name;
-        this.life = life;
     }
 
 }
@@ -96,5 +107,53 @@ export class SocketError {
         this.code = code;
         this.message = message;
     }
+}
+
+/**
+ * The base state for the game
+ */
+export class GameState {
+
+    playerStates: PlayerState[];
+
+    constructor(room: Room) {
+        //Map room users to their corrosponding state
+        this.playerStates = room.users.map(user => {
+            return new PlayerState(
+                user,
+                room.settings.startingLife
+            );
+        });
+    }
+
+    public modUserLife(userId: string, value: number) {
+        const playerState = this.playerStates.find(x => x.userId === userId);
+        if (playerState) {
+            playerState.life = (playerState.life + value);
+        }
+    }
+
+    public modOtherLife(userId: string, value: number) {
+        for (let i = 0; i < this.playerStates.length; i++) {
+            if (this.playerStates[i].userId !== userId)
+                this.playerStates[i].life = (this.playerStates[i].life + value);
+        }
+    }
 
 }
+
+
+export class PlayerState {
+
+    userId: string;
+    life: number;
+
+    constructor(
+        user: User,
+        startingLife: number
+    ) {
+        this.userId = user.id;
+        this.life = startingLife;
+    }
+}
+

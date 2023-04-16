@@ -1,6 +1,5 @@
 import { Room, Settings, User } from "@/pages";
-import { createContext, useContext, useEffect, useState } from "react";
-import { Socket, io } from "socket.io-client";
+import { createContext, useContext } from "react";
 
 export const RoomContext = createContext<{
     me: User,
@@ -8,8 +7,8 @@ export const RoomContext = createContext<{
     setRoom: (room: Room | null) => void,
     setSettings: (settings: Settings) => void,
 }>({
-    me: { id: '', color: '', isHost: false, life: 40, name: '' },
-    room: { id: '', users: [], settings: { startingLife: 40 } },
+    me: { id: '', color: '', isHost: false, name: '' },
+    room: { id: '', users: [], settings: { startingLife: 40 }, gameState: null },
     setRoom: () => { },
     setSettings: () => { }
 });
