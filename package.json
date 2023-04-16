@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently --kill-others \"next dev\" \"node socketio-server/app.js\"",
+    "dev": "concurrently --kill-others \"next dev\" \"node socket-server/build/src/index.js\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -19,7 +19,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "socket.io-client": "^4.6.1",
-    "typescript": "5.0.4"
+    "typescript": "^5.0.4"
   },
   "devDependencies": {
     "concurrently": "^8.0.1"
