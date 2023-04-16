@@ -41,19 +41,21 @@ const planeswalkers = [
 const rooms: Room[] = [];
 
 function p(log: string) {
-  console.log(`Socket.io:${log} `);
+  console.log(`Socket.io: ${log}`);
 }
 
 io.on('connection', socket => {
   p(`Socket connected ${socket.id}`);
 
   socket.on('disconnect', (reason: string) => {
+    p(`Socket disconnect: ${reason}`);
     if (socket.rooms.size > 1) {
       //handle leave room
     }
   });
 
   socket.conn.on("close", (reason: string) => {
+    p(`Socket close: ${reason}`);
     if (socket.rooms.size > 1) {
       //handle leave room
     }
@@ -66,9 +68,10 @@ io.on('connection', socket => {
   //Room / User event
   socket.on('new_room', (roomId: string, callback: any) => {
     socket.join(roomId);
-    const user: User = new User(socket.id, true, '#fff', planeswalkers[Math.floor(Math.random() * planeswalkers.length)], 40);
     const room: Room = new Room(roomId, [], new Settings());
-    room.users.push(user);
+    room.addUser(
+      new User(socket.id, true, '#fff', planeswalkers[Math.floor(Math.random() * planeswalkers.length)], 40)
+    );
     rooms.push(room);
     p(`Room created ${room.id}`);
     callback(room);
@@ -81,8 +84,10 @@ io.on('connection', socket => {
     //join the room
     socket.join(room.id);
     //Add user to room (non-host)
-    const user: User = new User(socket.id, false, '#fff', planeswalkers[Math.floor(Math.random() * planeswalkers.length)], 40);
-    room.users.push(user);
+    const user = new User(socket.id, false, '#fff', planeswalkers[Math.floor(Math.random() * planeswalkers.length)], 40);
+    room.addUser(
+      user
+    );
     //broadcast joined_room to all
     io.to(room.id).emit('joined_room', room, user);
     callback(room);
@@ -95,27 +100,25 @@ io.on('connection', socket => {
     //find the user
     const user = room.users.find(x => x.id === socket.id);
     if (!user) return;
-    //leave the eroom
+
+    //leave the room
     socket.leave(room.id);
-    const index = room.users.indexOf(user);
-    room.users.splice(index, 1);
-    //broadcast left_room to all
-    io.to(room.id).emit('left_room', room, user);
+    room.removeUser(user);
+
     //if there is no more users in the room, terminate room
-    if (room.users.length > 0) {
-      //If the user who left was host, pass host to next user
-      if (user.isHost) {
-        const newHost = room.users[0];
-        newHost.isHost = true;
-        room.users.splice(0, 1, newHost);
-      }
-    } else {
+    if (room.isEmpty()) {
       //teminate room
       p(`Room terminated ${room.id}`);
       const index = rooms.indexOf(room);
       rooms.splice(index, 1);
+      callback();
+      return;
     }
+
+    //broadcast left_room to all
+    io.to(room.id).emit('left_room', room, user);
     callback();
+
   });
 
   socket.on('update_settings', (settings: Settings, callback: any) => {

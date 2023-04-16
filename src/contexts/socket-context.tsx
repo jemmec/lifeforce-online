@@ -17,7 +17,6 @@ export function SocketProvider({ children }: { children: any }) {
             //leave room
             socket.emit('leave_room');
             socket.disconnect();
-            socket.close();
         }
         setSocket(null);
     }

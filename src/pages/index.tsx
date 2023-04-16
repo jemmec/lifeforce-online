@@ -81,13 +81,23 @@ export function Layout({ children }: LayoutProps) {
 function _() {
   //the app socket
   const { socket } = useSocket();
-
   //the room the user is currently in
   const [room, setRoom] = useState<Room | null>(null);
-
   //the current user inside of a room
   //Only exists when room has been defined
   const [me, setMe] = useState<User | null>(null);
+
+  function handleRoomChange(newRoom: Room | null) {
+    if (newRoom) {
+      setRoom(newRoom);
+    }
+  }
+
+  function handleSettingsChange(settings: Settings) {
+    if (room) {
+      setRoom({ ...room, settings });
+    }
+  }
 
   function handleNewRoom() {
     if (socket) {
@@ -107,7 +117,6 @@ function _() {
     }
   }
 
-
   useEffect(() => {
     if (socket && room) {
       const user = room.users.find(x => x.id === socket.id);
@@ -119,7 +128,13 @@ function _() {
   if (!socket && !room) return <div>{`Initalizing...`}</div>
   else if (socket && !room) return <Home onNewRoom={handleNewRoom} onJoinRoom={handleJoinRoom} />
   else if (room && me) return (
-    <RoomContext.Provider value={{ me, room, setRoom }}>
+    <RoomContext.Provider
+      value={{
+        me,
+        room,
+        setRoom: handleRoomChange,
+        setSettings: handleSettingsChange
+      }}>
       <Room />
     </RoomContext.Provider>
   )
@@ -191,7 +206,7 @@ export function Room() {
 }
 
 export function RoomSettings() {
-  const { me, room, setRoom } = useRoom();
+  const { me, room } = useRoom();
   return (
     <>
       <div>
@@ -205,7 +220,7 @@ export function RoomSettings() {
 }
 
 export function UserList() {
-  const { me, room, setRoom } = useRoom();
+  const { me, room } = useRoom();
   return (
     <>
       <div>
