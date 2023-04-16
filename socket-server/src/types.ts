@@ -1,3 +1,5 @@
+import { UIEventHandler, useId } from "react";
+
 export class Room {
 
     id: string;
@@ -34,6 +36,17 @@ export class Room {
         }
     }
 
+    public updateSettings(newSettings: Settings) {
+        this.settings = { ...newSettings };
+    }
+
+    public updateUser(newUser: User) {
+        const user = this.users.find(x => x.id === newUser.id);
+        if (!user) return;
+        const index = this.users.indexOf(user);
+        this.users.splice(index, 1, newUser);
+    }
+
     public isEmpty(): boolean { return this.users.length === 0 };
 }
 
@@ -58,7 +71,7 @@ export class User {
         this.name = name;
         this.life = life;
     }
-    
+
 }
 
 export class Settings {

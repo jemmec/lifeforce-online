@@ -163,16 +163,16 @@ export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
 }
 
 export function Room() {
-  const { me, room, setRoom } = useRoom();
+  const { me, room, setRoom, setSettings } = useRoom();
   //TODO move to hook like useRoomEvents
   const { socket } = useSocket();
   useEffect(() => {
     if (socket) {
-      socket.on('joined_room', (room: Room, user: User) => {
+      socket.on('updated_room', (room: Room) => {
         setRoom(room);
       });
-      socket.on('left_room', (room: Room, user: User) => {
-        setRoom(room);
+      socket.on('updated_settings', (settings: Settings) => {
+        setSettings(settings);
       });
     }
   }, [socket]);
@@ -206,13 +206,32 @@ export function Room() {
 }
 
 export function RoomSettings() {
-  const { me, room } = useRoom();
+
+  const { socket } = useSocket();
+  const { me, room, setSettings } = useRoom();
+
+  function handleSettingsPropChange(prop: string, value: any) {
+    if (socket) {
+      //update pop
+      const settings = { ...room.settings, [prop]: value };
+      //update local state
+      setSettings(settings);
+      //broadcast settings change to sockets
+      socket.emit('update_settings', room.id, settings,)
+    }
+  }
+
   return (
     <>
       <div>
         <div>
           <div>{`Starting life: `}</div>
-          <input disabled={!me.isHost} value={room.settings.startingLife} onChange={() => { }} />
+          <input
+            type="number"
+            disabled={!me.isHost}
+            value={room.settings.startingLife}
+            onChange={(e) => handleSettingsPropChange('startingLife', e.target.value)}
+          />
         </div>
       </div>
     </>

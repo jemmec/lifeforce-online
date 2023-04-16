@@ -89,7 +89,7 @@ io.on('connection', socket => {
       user
     );
     //broadcast joined_room to all
-    io.to(room.id).emit('joined_room', room, user);
+    io.to(room.id).emit('updated_room', room, user);
     callback(room);
   });
 
@@ -100,11 +100,9 @@ io.on('connection', socket => {
     //find the user
     const user = room.users.find(x => x.id === socket.id);
     if (!user) return;
-
     //leave the room
     socket.leave(room.id);
     room.removeUser(user);
-
     //if there is no more users in the room, terminate room
     if (room.isEmpty()) {
       //teminate room
@@ -114,21 +112,27 @@ io.on('connection', socket => {
       callback();
       return;
     }
-
     //broadcast left_room to all
-    io.to(room.id).emit('left_room', room, user);
+    io.to(room.id).emit('updated_room', room, user);
     callback();
-
   });
 
-  socket.on('update_settings', (settings: Settings, callback: any) => {
-
+  socket.on('update_settings', (roomId: string, settings: Settings) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    room.updateSettings(settings);
+    //Broadcast to all (but me) that settings have changed
+    socket.to(room.id).emit('updated_settings', settings);
   });
 
   //User
 
-  socket.on('update_user', (user: User, callback: any) => {
-
+  socket.on('update_user', (roomId: string, user: User) => {
+    const room = rooms.find(x => x.id === roomId);
+    if (!room) return;
+    room.updateUser(user);
+    //broadcast to all (but me) that user has updated
+    socket.to(room.id).emit('updated_room', room, user);
   });
 
   //Game Events
