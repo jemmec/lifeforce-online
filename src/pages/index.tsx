@@ -6,6 +6,9 @@ import Head from 'next/head';
 import router, { useRouter } from 'next/router';
 import { ReactNode, useEffect, useState } from 'react';
 
+import { Yeseva_One } from 'next/font/google'
+const titleFont = Yeseva_One({ subsets: ['latin'], weight: '400' })
+
 export type Room = {
   id: string,
   users: User[],
@@ -55,21 +58,22 @@ export default function Index() {
   )
 }
 
-type LayoutProps = {
+export function Layout({ children }: {
   children: ReactNode;
-}
-
-export function Layout({ children }: LayoutProps) {
+}) {
   return (
     <>
       <div className='fullscreen'>
         <div className='app-container'>
-          <h1>{`Lifeforce`}</h1>
+          <h1 className={titleFont.className}>{`Lifeforce`}</h1>
           {children}
         </div>
       </div>
       <style jsx>
         {`
+          h1{
+            font-size: 48px;
+          }
           .fullscreen{
             width: 100vw;
             height: 100vh;
@@ -304,20 +308,25 @@ export function Room() {
 
 export function RoomLink() {
   const { room } = useRoom();
+  const [copied, setCopied] = useState(false);
+
+  function handleLinkCopy() {
+    setCopied(true);
+    navigator.clipboard.writeText(`http://localhost:3000/?roomId=${room.id}`);
+  }
 
   return (
     <>
       <div className='room-link'>
         <div>{`Share the link:`}</div>
-        <div className='link'>
-          {`http://localhost:3000/?roomId=${room.id}`}
-        </div>
+        <button className='link' onClick={handleLinkCopy}>
+          {copied ? 'Copied!' : `http://localhost:3000/?roomId=${room.id}`}
+        </button>
       </div>
       <style jsx>
         {`
           .room-link{
             width: 100%;
-
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -325,13 +334,6 @@ export function RoomLink() {
           }
           .link{
             text-decoration: underline;
-            font-weight: 600;
-            background-color: rgb(194, 194, 194);
-            color: rgb(20,20,20);
-            padding: 6px 12px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
           }
         `}
       </style>
