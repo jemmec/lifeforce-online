@@ -63,7 +63,6 @@ export class Room {
     }
 }
 
-
 export class User {
 
     id: string;

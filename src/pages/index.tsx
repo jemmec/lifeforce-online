@@ -3,6 +3,7 @@ import { RoomContext, useRoom } from '@/contexts/room-context';
 import { useSocket } from '@/contexts/socket-context';
 import { randomId } from '@/utils/id-generator';
 import Head from 'next/head';
+import router, { useRouter } from 'next/router';
 import { ReactNode, useEffect, useState } from 'react';
 
 export type Room = {
@@ -88,6 +89,9 @@ export function Layout({ children }: LayoutProps) {
 
 
 function _() {
+  //try to get the roomId query param
+  const router = useRouter();
+  const { roomId } = router.query;
   //the app socket
   const { socket } = useSocket();
   //the room the user is currently in
@@ -125,6 +129,15 @@ function _() {
     }
   }
 
+  //Auto connect to roomId
+  useEffect(() => {
+    if (socket && roomId) {
+      handleJoinRoom(roomId as string);
+      //remove the roomId for cleaner UX
+      router.replace('/');
+    }
+  }, [socket])
+
   useEffect(() => {
     if (socket && room) {
       const user = room.users.find(x => x.id === socket.id);
@@ -134,7 +147,7 @@ function _() {
   }, [socket, room])
 
   if (!socket && !room) return <div>{`Initalizing...`}</div>
-  else if (socket && !room) return <Home onNewRoom={handleNewRoom} onJoinRoom={handleJoinRoom} />
+  else if (socket && !room) return <Home onNewRoom={handleNewRoom} />
   else if (room && me) return (
     <RoomContext.Provider
       value={{
@@ -151,11 +164,9 @@ function _() {
 
 type HomeProps = {
   onNewRoom: () => void;
-  onJoinRoom: (roomId: string) => void;
 }
 
-export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
-  const [roomId, setRoomId] = useState<string>('');
+export function Home({ onNewRoom }: HomeProps) {
   return (
     <>
       <Head>
@@ -163,8 +174,6 @@ export function Home({ onNewRoom, onJoinRoom }: HomeProps) {
       </Head>
       <div className='home'>
         <button onClick={onNewRoom}>{`new room`}</button>
-        <input value={roomId} onChange={(e: any) => setRoomId(e.target.value)} />
-        <button onClick={() => onJoinRoom(roomId)}>{`join room`}</button>
       </div>
     </>
   )
@@ -214,7 +223,7 @@ export function Room() {
           <title>{`Lifeforce | Room`}</title>
         </Head>
         <div>
-          <h3>{`Room: ${room.id}`}</h3>
+          <RoomLink />
           <Users />
           <Settings />
           <button onClick={handleLeaveRoom}>leave</button>
@@ -234,6 +243,20 @@ export function Room() {
         }}>
         <Game />
       </GameContext.Provider>
+    </>
+  )
+}
+
+export function RoomLink() {
+  const { room } = useRoom();
+
+  return (
+    <>
+      <div>
+        <a href={`/?roomId=${room.id}`}>
+          {`http://localhost:3000/?roomId=${room.id}`}
+        </a>
+      </div>
     </>
   )
 }
