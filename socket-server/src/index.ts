@@ -1,6 +1,6 @@
 import * as Koa from 'koa';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Room, Settings, User } from './types';
 
 const app = new Koa();
@@ -48,21 +48,44 @@ function p(log: string) {
   console.log(`Socket.io: ${log}`);
 }
 
+function leaveRoom(socket: Socket, roomId: string) {
+  const room = rooms.find(x => x.id === roomId);
+  if (!room) return;
+  //find the user
+  const user = room.users.find(x => x.id === socket.id);
+  if (!user) return;
+  //leave the room
+  socket.leave(room.id);
+  room.removeUser(user);
+  //if there is no more users in the room, terminate room
+  if (room.isEmpty()) {
+    //teminate room
+    p(`Room terminated ${room.id}`);
+    const index = rooms.indexOf(room);
+    rooms.splice(index, 1);
+    return;
+  }
+  //broadcast updated_room to all (not empty)
+  io.to(room.id).emit('updated_room', room);
+}
+
 io.on('connection', socket => {
   p(`Socket connected ${socket.id}`);
 
+  socket.on("disconnecting", () => {
+    //handle leave room when a socket is disconnecting
+    if (socket.rooms.size > 1) {
+      //Note: sockts are always inside a room with their 'id'
+      leaveRoom(socket, [...socket.rooms][1]);
+    }
+  });
+
   socket.on('disconnect', (reason: string) => {
     p(`Socket disconnect: ${reason}`);
-    if (socket.rooms.size > 1) {
-      //handle leave room
-    }
   });
 
   socket.conn.on("close", (reason: string) => {
     p(`Socket close: ${reason}`);
-    if (socket.rooms.size > 1) {
-      //handle leave room
-    }
   });
 
   socket.on("error", (err) => {
@@ -98,26 +121,7 @@ io.on('connection', socket => {
   });
 
   socket.on('leave_room', (roomId: string, callback: any) => {
-    //Find the room
-    const room = rooms.find(x => x.id === roomId);
-    if (!room) return;
-    //find the user
-    const user = room.users.find(x => x.id === socket.id);
-    if (!user) return;
-    //leave the room
-    socket.leave(room.id);
-    room.removeUser(user);
-    //if there is no more users in the room, terminate room
-    if (room.isEmpty()) {
-      //teminate room
-      p(`Room terminated ${room.id}`);
-      const index = rooms.indexOf(room);
-      rooms.splice(index, 1);
-      callback();
-      return;
-    }
-    //broadcast left_room to all
-    io.to(room.id).emit('updated_room', room);
+    leaveRoom(socket, roomId);
     callback();
   });
 
@@ -189,6 +193,8 @@ io.on('connection', socket => {
 httpServer.listen(3001);
 
 p("Running server at http://localhost:3001/");
+
+//Middleware
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
