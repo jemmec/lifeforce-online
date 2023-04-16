@@ -1,2 +1,6 @@
-export const randomId = () =>
-    (Math.random().toString(36) + "000000").substr(2, 6);
+export const randomId = (length: number = 6) => {
+    let str = '';
+    for (let i = 0; i < length; i++)
+        str += '0';
+    return (Math.random().toString(36) + str).substr(2, length);
+}

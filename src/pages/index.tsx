@@ -88,9 +88,7 @@ function _() {
   const [me, setMe] = useState<User | null>(null);
 
   function handleRoomChange(newRoom: Room | null) {
-    if (newRoom) {
-      setRoom(newRoom);
-    }
+    setRoom(newRoom);
   }
 
   function handleSettingsChange(settings: Settings) {
@@ -102,7 +100,8 @@ function _() {
   function handleNewRoom() {
     if (socket) {
       //Start room with randomId
-      const roomId = randomId();
+      //TODO: Move room ID generation to server (?)
+      const roomId = randomId(8);
       socket.emit('new_room', roomId, (room: Room) => {
         setRoom(room);
       });
@@ -226,8 +225,11 @@ export function RoomSettings() {
       <div>
         <div>
           <div>{`Starting life: `}</div>
+          <div>{room.settings.startingLife}</div>
           <input
-            type="number"
+            type="range"
+            min={1}
+            max={999}
             disabled={!me.isHost}
             value={room.settings.startingLife}
             onChange={(e) => handleSettingsPropChange('startingLife', e.target.value)}
