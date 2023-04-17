@@ -22,7 +22,6 @@ export function SocketProvider({ children }: { children: any }) {
 
     useEffect(() => {
         if (!socket) {
-
             const s = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL ?? '',
                 {
                     auth: { token: process.env.NEXT_PUBLIC_SOCKET_IO_PASSPHRASE ?? '' },
@@ -40,7 +39,6 @@ export function SocketProvider({ children }: { children: any }) {
                 setError(err);
                 cleanup();
             });
-
         }
         return (() => {
             cleanup();

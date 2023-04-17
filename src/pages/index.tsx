@@ -50,6 +50,17 @@ function _() {
     }
   }
 
+  function handleUserChange(newUser: UserType) {
+    if (room) {
+      const newUsers = room.users;
+      const user = newUsers.find(x => x.id === newUser.id);
+      if (user) {
+        newUsers.splice(newUsers.indexOf(user), 1, newUser);
+      }
+      setRoom({ ...room, users: newUsers })
+    }
+  }
+
   function handleNewRoom() {
     if (socket) {
       //Start room with randomId
@@ -94,7 +105,8 @@ function _() {
         me,
         room,
         setRoom: handleRoomChange,
-        setSettings: handleSettingsChange
+        setSettings: handleSettingsChange,
+        setMe: handleUserChange
       }}>
       <Room />
     </RoomContext.Provider>
