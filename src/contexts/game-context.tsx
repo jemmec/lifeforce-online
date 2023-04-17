@@ -1,9 +1,9 @@
-import { GameState } from "@/pages";
+import { GameStateType } from "@/types";
 import { createContext, useContext } from "react";
 
 export const GameContext = createContext<{
-    gameState: GameState,
-    setGameState: (gameState: GameState) => void
+    gameState: GameStateType,
+    setGameState: (gameState: GameStateType) => void
 }>({
     gameState: { playerStates: [] },
     setGameState: () => { }

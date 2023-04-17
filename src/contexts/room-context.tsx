@@ -1,11 +1,11 @@
-import { Room, Settings, User } from "@/pages";
+import { RoomType, SettingsType, UserType } from "@/types";
 import { createContext, useContext } from "react";
 
 export const RoomContext = createContext<{
-    me: User,
-    room: Room,
-    setRoom: (room: Room | null) => void,
-    setSettings: (settings: Settings) => void,
+    me: UserType,
+    room: RoomType,
+    setRoom: (room: RoomType | null) => void,
+    setSettings: (settings: SettingsType) => void,
 }>({
     me: { id: '', color: '', isHost: false, name: '' },
     room: { id: '', users: [], settings: { startingLife: 40 }, gameState: null },

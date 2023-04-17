@@ -1,4 +1,3 @@
-import { Room, User } from "@/pages";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
