@@ -47,7 +47,7 @@ export function Room() {
         return (
             <>
                 <Head>
-                    <title>{`Lifeforce | Room`}</title>
+                    <title>{`Lifeforce | Room ${me.isHost ? '(Host)' : ''}`}</title>
                 </Head>
                 <div className='room'>
                     {me.isHost ? <RoomLink /> : <></>}
@@ -59,40 +59,41 @@ export function Room() {
                             <Settings />
                         </div>
                     </div>
-                    <div className='buttons'>
-                        <button onClick={handleLeaveRoom}>leave</button>
-                        {me.isHost ? <button onClick={handleStartGame}>start game</button> : <></>}
+                    <div className='room-actions'>
+                        <button onClick={handleLeaveRoom}>Leave</button>
+                        {me.isHost ? <button onClick={handleStartGame}>Start Game</button> : <></>}
                     </div>
                 </div>
                 <style jsx>
                     {`
-              .room{
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
-                gap: var(--gap-lg);
-              }
-              .lobby{
-                width: 100%;
-                display: flex;
-                flex-direction: row;
-                gap: var(--gap-lg);
-              }
-              .card{
-                background-color: rgba(20,20,20,0.5);
-                border-radius: var(--border-radius);
-                padding: 18px;
-                width: 50%;
-              }
-              .buttons{
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                gap: var(--gap-lg)
-              }
-            `}
+                        .room{
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-start;
+                            align-items: center;
+                            gap: var(--gap-lg);
+                        }
+                        .lobby{
+                            width: 100%;
+                            display: flex;
+                            flex-direction: row;
+                            gap: var(--gap-lg);
+                        }
+                        .card{
+                            background-color: rgba(20,20,20,0.5);
+                            border-radius: var(--border-radius);
+                            padding: 18px;
+                            width: 50%;
+                        }
+                        .room-actions{
+                            width: 100%;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-between;
+                            gap: var(--gap-lg);
+                        }
+                    `}
                 </style>
             </>
         )
