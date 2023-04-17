@@ -1,5 +1,6 @@
 import { useRoom } from "@/contexts/room-context";
 import { UserType } from "@/types";
+import { PencilIcon } from "@primer/octicons-react";
 
 export function Users() {
     const { me, room } = useRoom();
@@ -15,6 +16,7 @@ export function Users() {
                                     {
                                         isMe ? <b>{user.name}</b> : <p>{user.name}</p>
                                     }
+                                    <PencilIcon size={20} />
                                 </div>
                             );
                         })
@@ -28,6 +30,12 @@ export function Users() {
                 }
                 .user-list{
                     
+                }
+                .user{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
                 }
             `}
             </style>

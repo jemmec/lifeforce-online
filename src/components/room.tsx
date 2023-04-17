@@ -8,6 +8,7 @@ import { RoomLink } from "./room-link";
 import { Settings } from "./settings";
 import { Users } from "./users";
 import { RoomType, SettingsType, GameStateType } from "@/types";
+import { SignOutIcon, PlayIcon } from "@primer/octicons-react";
 
 export function Room() {
     const { me, room, setRoom, setSettings } = useRoom();
@@ -60,8 +61,8 @@ export function Room() {
                         </div>
                     </div>
                     <div className='room-actions'>
-                        <button onClick={handleLeaveRoom}>Leave</button>
-                        {me.isHost ? <button onClick={handleStartGame}>Start Game</button> : <></>}
+                        <button onClick={handleLeaveRoom}>{`Leave `}<SignOutIcon size={20} /> </button>
+                        {me.isHost ? <button onClick={handleStartGame}>{`Start Game `}<PlayIcon size={20}/></button> : <></>}
                     </div>
                 </div>
                 <style jsx>
