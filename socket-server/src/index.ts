@@ -22,18 +22,18 @@ const planeswalkers = [
   "Elspeth Tirel",
   "Nicol Bolas",
   "Karn Liberated",
-  "Teferi, Mage of Zhalfir",
+  "Teferi",
   "Nissa Revane",
   "Koth of the Hammer",
   "Gideon Jura",
   "Sorin Markov",
-  "Tamiyo, the Moon Sage",
-  "Venser, the Sojourner",
+  "Tamiyo",
+  "Venser",
   "Dack Fayden",
-  "Ugin, the Spirit Dragon",
+  "Ugin",
   "Sarkhan Vol",
   "Domri Rade",
-  "Ashiok, Nightmare Weaver",
+  "Ashiok",
 ];
 
 function randomName(): string {

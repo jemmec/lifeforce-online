@@ -58,12 +58,23 @@ export function User({ user }: { user: UserType }) {
             <div key={user.id} className="user">
                 {
                     isMe ? (!edit ? <>
-                        <b>{user.name}</b>
+                        <div className="flex-start">
+                            <div className="color" />
+                            <b>{user.name}</b>
+                        </div>
                         <div className="user-edit" onClick={handleEditUser}>
                             <PencilIcon size={20} />
                         </div>
                     </> : <>
-                        <input maxLength={32} value={name} onChange={(e) => setName(e.target.value)} />
+                        <div className="flex-start">
+                            <div className="color" />
+                            <input
+                                maxLength={32}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                onFocus={(e) => { e.target.select() }}
+                            />
+                        </div>
                         <div className="user-edit" onClick={handleEndEdit}>
                             <CheckIcon size={20} />
                         </div>
@@ -80,6 +91,19 @@ export function User({ user }: { user: UserType }) {
                 }
                 .user-edit{
                     cursor: pointer;
+                }
+                .flex-start{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: var(--gap-lg)
+                }
+                .color{
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 12px;
+                    background-color: ${me.color};
                 }
                 `}
             </style>
