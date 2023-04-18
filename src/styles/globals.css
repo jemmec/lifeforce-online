@@ -1,10 +1,11 @@
 :root {
-  --max-width: 1280px;
+  --max-width: 768px;
   --border-radius: 8px;
   --foreground: rgb(210, 210, 210);
 
   --gap-sm: 6px;
-  --gap-lg: 12px
+  --gap-md: 12px;
+  --gap-lg: 24px;
 }
 
 * {
@@ -29,6 +30,17 @@ a {
   text-decoration: none;
 }
 
+input[type='text']
+{
+  font-size: 16px;
+  border: none;
+  background: none;
+  color: var(--foreground);
+  width: min-content;
+  padding: 0;
+  width: 100%; 
+}
+
 button {
   font-size: 16px;
   border: none;
@@ -44,4 +56,14 @@ button {
 
 button:hover {
   background-color: rgba(200, 200, 200, 1);
+}
+
+.glow-button {
+  transition: box-shadow 0.2s ease-out;
+}
+
+.glow-button:hover {
+  box-shadow: rgba(46, 240, 182, 0.4) 0px 0px 10px,
+    rgba(46, 201, 240, 0.3) 0px 0px 25px,
+    rgba(46, 240, 227, 0.2) 0px 0px 40px;
 }

@@ -4,18 +4,18 @@ const titleFont = Yeseva_One({ subsets: ['latin'], weight: '400' })
 
 
 export function Layout({ children }: {
-    children: ReactNode;
-  }) {
-    return (
-      <>
-        <div className='fullscreen'>
-          <div className='app-container'>
-            <h1 className={titleFont.className}>{`Lifeforce`}</h1>
-            {children}
-          </div>
+  children: ReactNode;
+}) {
+  return (
+    <>
+      <div className='fullscreen'>
+        <div className='app-container'>
+          <h1 className={titleFont.className}>{`Lifeforce`}</h1>
+          {children}
         </div>
-        <style jsx>
-          {`
+      </div>
+      <style jsx>
+        {`
             h1{
               font-size: 48px;
             }
@@ -28,18 +28,18 @@ export function Layout({ children }: {
               align-items: center;
             }
             .app-container{
-              max-width: 720px;
+              padding: 12px;
+              max-width: var(--max-width);
               width: 100%;
               display: flex;
               flex-direction: column;
               justify-content: flex-start;
               align-items: center;
-              gap: var(--gap-lg);
+              gap: var(--gap-md);
             }
           `}
-        </style>
-      </>
-    )
-  }
-  
-  
+      </style>
+    </>
+  )
+}
+

@@ -28,7 +28,7 @@ export function Settings() {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                gap: var(--gap-sm);
+                gap: var(--gap-md);
             }
             .settings > h3 {
                 align-self: center;

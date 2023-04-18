@@ -10,19 +10,25 @@ export function Users() {
     return (
         <>
             <div className="users">
+                <h3>{`Users`}</h3>
                 <div className="user-list">
                     {room.users.map((user: UserType) => <User key={user.id} user={user} />)}
                 </div>
             </div>
             <style jsx>
                 {`
-                .users
-                    
+                .users{
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--gap-md);
+                }
+                h3{
+                    align-self: center;
                 }
                 .user-list{
                     display: flex;
                     flex-direction: column;
-                    justify-content: flex-start;
+                    gap: var(--gap-sm);
                 }
             `}
             </style>
@@ -40,6 +46,12 @@ export function User({ user }: { user: UserType }) {
 
     function handleEditUser() {
         setEdit(true);
+    }
+
+    function handleKeyDown(e: any) {
+        if (e.key === 'Enter') {
+            handleEndEdit();
+        }
     }
 
     function handleEndEdit() {
@@ -69,16 +81,21 @@ export function User({ user }: { user: UserType }) {
                         <div className="flex-start">
                             <div className="color" />
                             <input
+                                type='text'
                                 maxLength={32}
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                onKeyDown={handleKeyDown}
                                 onFocus={(e) => { e.target.select() }}
                             />
                         </div>
                         <div className="user-edit" onClick={handleEndEdit}>
                             <CheckIcon size={20} />
                         </div>
-                    </>) : <p>{user.name}</p>
+                    </>) : <div className="flex-start">
+                        <div className="color" />
+                        <p>{user.name}</p>
+                    </div>
                 }
             </div>
             <style jsx>
@@ -97,7 +114,7 @@ export function User({ user }: { user: UserType }) {
                     flex-direction: row;
                     justify-content: flex-start;
                     align-items: center;
-                    gap: var(--gap-lg)
+                    gap: var(--gap-md)
                 }
                 .color{
                     width: 18px;

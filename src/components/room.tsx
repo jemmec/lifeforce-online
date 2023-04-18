@@ -62,7 +62,7 @@ export function Room() {
                     </div>
                     <div className='room-actions'>
                         <button onClick={handleLeaveRoom}>{`Leave `}<SignOutIcon size={20} /> </button>
-                        {me.isHost ? <button onClick={handleStartGame}>{`Start Game `}<PlayIcon size={20}/></button> : <></>}
+                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start Game `}<PlayIcon size={20} /></button> : <></>}
                     </div>
                 </div>
                 <style jsx>
@@ -73,26 +73,33 @@ export function Room() {
                             flex-direction: column;
                             justify-content: flex-start;
                             align-items: center;
-                            gap: var(--gap-lg);
+                            gap: var(--gap-md);
                         }
                         .lobby{
                             width: 100%;
                             display: flex;
                             flex-direction: row;
-                            gap: var(--gap-lg);
+                            gap: var(--gap-md);
+                            min-height: 400px;
                         }
                         .card{
                             background-color: rgba(20,20,20,0.5);
                             border-radius: var(--border-radius);
                             padding: 18px;
-                            width: 50%;
+                            width: 100%;
                         }
                         .room-actions{
                             width: 100%;
                             display: flex;
                             flex-direction: row;
                             justify-content: space-between;
-                            gap: var(--gap-lg);
+                            gap: var(--gap-md);
+                        }
+                        @media screen and (max-width: 768px) {
+                            .lobby{
+                                flex-direction: column;
+                                min-height: 0px;
+                            }
                         }
                     `}
                 </style>
