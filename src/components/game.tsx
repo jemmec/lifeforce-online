@@ -10,13 +10,8 @@ export function Game() {
   const { socket } = useSocket();
   const { gameState, setGameState } = useGame();
   const { me, room } = useRoom();
-  const [myState, setMyState] = useState<PlayerStateType | null>();
 
-  useEffect(() => {
-    const ms = gameState.playerStates.find(x => x.userId === me.id);
-    if (ms)
-      setMyState(ms);
-  }, [me, gameState]);
+
 
   useEffect(() => {
     if (socket) {
@@ -26,18 +21,11 @@ export function Game() {
     }
   }, [socket])
 
-  function handleModLife(value: number) {
-    if (socket && myState) {
-      //update local state
-      setMyState({ ...myState, life: myState.life += value });
-      socket.emit('mod_life', room.id, value);
-    }
-  }
+
 
   function handleModOtherLife(value: number) {
     if (socket) {
       //update local state
-
       socket.emit('mod_other_life', room.id, value);
     }
   }
@@ -54,7 +42,6 @@ export function Game() {
     }
   }
 
-  if (!myState) return <div>{`Game in progress...`}</div>
 
   return (
     <>
@@ -62,6 +49,12 @@ export function Game() {
         <title>{`Lifeforce | In Game`}</title>
       </Head>
       <div className="game">
+        {
+          me.isHost ? <div className="host-actions">
+            <button onClick={handleBackToLobby}><SignOutIcon size={22} /></button>
+            <button onClick={handleResetGame}>{`Reset `}<SyncIcon size={22} /></button>
+          </div> : <></>
+        }
         <div className="enemy-list">
           {
             gameState.playerStates.map(playerState => {
@@ -79,33 +72,31 @@ export function Game() {
           <button onClick={() => handleModOtherLife(-1)}>{`decrease other`}</button>
           <button onClick={() => handleModOtherLife(+1)}>{`increase other`}</button>
         </div>
-        <div>
-          <button onClick={() => handleModLife(-1)}>{`decrease`}</button>
-          <h1>{myState.life}</h1>
-          <button onClick={() => handleModLife(+1)}>{`increase`}</button>
-        </div>
-        {
-          me.isHost ? <div className="host-actions">
-            <button onClick={handleResetGame}>{`Reset `}<SyncIcon size={22}/></button>
-            <button onClick={handleBackToLobby}>{`Back To Lobby `}<SignOutIcon size={22}/></button>
-          </div> : <></>
-        }
+        <Me />
       </div>
       <style jsx>
         {`
             .game{
               width: 100%;
+              display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                gap: var(--gap-md);
             }
             .enemy-list{
               display: flex;
+              flex-direction: row;
+              justify-content: center;
+              flex-wrap: wrap;
+              gap: var(--gap-sm);
+              padding: 12px;
             }
-
-
-
             .host-actions{
+              width: 100%;
               display: flex;
               flex-direction: row;
-              justify-content: space-evenly;
+              justify-content: space-between;
             }
           `}
       </style>
@@ -124,21 +115,25 @@ function Enemy({ playerState, user }: { playerState: PlayerStateType, user: User
         {`
         .enemy{
           background-color: ${user.color};
-          color: black;
+          color: rgb(15,15,15);
           border-radius: var(--border-radius);
           padding: 24px;
-
           display: flex;
           flex-direction: column;
           align-items: center;
+          width: 200px;
+          height: 150px;
         }
         .name{
           font-size: 20px;
-          font-weight: 400;
+          font-weight: 500;
+          opacity: 0.75;
+          text-align: center;
         }
         .life{
-          font-size: 48px;
+          font-size: 72px;
           font-weight: 700;
+          opacity: 0.8;
         }
         `}
       </style>
@@ -147,5 +142,96 @@ function Enemy({ playerState, user }: { playerState: PlayerStateType, user: User
 }
 
 function Me() {
+  const { socket } = useSocket();
+  const { gameState, setGameState } = useGame();
+  const { me, room } = useRoom();
+  const [myState, setMyState] = useState<PlayerStateType | null>();
 
+  useEffect(() => {
+    const ms = gameState.playerStates.find(x => x.userId === me.id);
+    if (ms)
+      setMyState(ms);
+  }, [me, gameState]);
+
+  function handleModLife(value: number) {
+    if (socket && myState) {
+      //update local state
+      setMyState({ ...myState, life: myState.life += value });
+      socket.emit('mod_life', room.id, value);
+    }
+  }
+  return (
+    <>
+      {
+        myState ?
+          <div className="me">
+            <div className="zone">
+              <div className="mod-button interactable" onClick={() => handleModLife(-1)} ></div>
+              <div className="mod-button interactable" onClick={() => handleModLife(-5)} ></div>
+              <div className="absolute">
+                <div className="symbol">{`-`}</div>
+              </div>
+            </div>
+            <div className="zone">
+              <div className="mod-button interactable" onClick={() => handleModLife(+1)} ></div>
+              <div className="mod-button interactable" onClick={() => handleModLife(+5)} ></div>
+              <div className="absolute">
+                <div className="symbol">{`+`}</div>
+              </div>
+            </div>
+            <div className="absolute">
+              <div className="life">{myState.life}</div>
+            </div>
+          </div> :
+          <div className="no-state">{`Please wait for the active game to end.`}</div>
+      }
+      <style jsx>
+        {`
+        .me{
+          width: 100%;
+          background-color: ${me.color};
+          color: rgb(15,15,15);
+          border-radius: var(--border-radius);
+          position: relative;
+          display: flex;
+          flex-direction: row;
+        }
+        .absolute{
+          position: absolute;
+          left: 0; 
+          right: 0; 
+          bottom: 0;
+          top: 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+        }
+        .life{
+          line-height: 0px;
+          font-size: 82px;
+          font-weight: 700;
+          opacity: 0.8;
+        }
+        .zone{
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .mod-button{
+          cursor: pointer;
+          height: 80px;
+        }
+        .symbol{
+          line-height: 0px;
+          font-size: 96px;
+          font-weight: 300;
+          opacity: 0.5;
+        }
+
+        `}
+      </style>
+    </>
+  )
 }

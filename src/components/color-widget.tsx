@@ -11,7 +11,7 @@ export function ColorWidget({ colors, show, onChange }: {
             <FadeUpMotion timing={{ duration: 'short' }}>
                 <div className="color-widget">
                     <div className="grid">
-                        {colors.map(color => <div key={color} className="color" onClick={() => onChange(color)} style={{ background: color }} />)}
+                        {colors.map(color => <div key={color} className="color interactable" onClick={() => onChange(color)} style={{ background: color }} />)}
                     </div>
                 </div>
             </FadeUpMotion>

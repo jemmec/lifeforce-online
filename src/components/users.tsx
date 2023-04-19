@@ -97,7 +97,7 @@ export function User({ user }: { user: UserType }) {
                                 <div className="color" />
                                 <b>{user.name}</b>
                             </div>
-                            <div className="user-edit" onClick={handleEditUser}>
+                            <div className="user-edit interactable" onClick={handleEditUser}>
                                 <PencilIcon size={28} />
                             </div>
                         </> : <>
@@ -119,6 +119,7 @@ export function User({ user }: { user: UserType }) {
                                     />
                                 </div>
                                 <input
+                                    className="interactable"
                                     type='text'
                                     maxLength={32}
                                     value={name}
@@ -127,7 +128,7 @@ export function User({ user }: { user: UserType }) {
                                     onFocus={(e) => { e.target.select() }}
                                 />
                             </div>
-                            <div className="user-edit" onClick={handleEndEdit}>
+                            <div className="user-edit interactable" onClick={handleEndEdit}>
                                 <CheckIcon size={28} />
                             </div>
                         </>) : <div className="flex-start">

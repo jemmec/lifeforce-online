@@ -9,9 +9,19 @@
 }
 
 * {
+  pointer-events: none;
+  user-select: none;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+.interactable {
+  pointer-events: all;
+}
+
+.selectable {
+  user-select: all;
 }
 
 html,
@@ -31,6 +41,7 @@ a {
 }
 
 button {
+  pointer-events: all;
   font-size: 22px;
   border: none;
   cursor: pointer;
@@ -45,6 +56,11 @@ button {
 
 button:hover {
   background-color: rgba(200, 200, 200, 1);
+}
+
+.input{
+  pointer-events: all;
+  user-select: all;
 }
 
 .glow-button {

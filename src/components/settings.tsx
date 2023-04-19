@@ -66,6 +66,7 @@ export function RangeField({
                     <div>{value}</div>
                 </div>
                 <input
+                    className="interactable"
                     type="range"
                     step={10}
                     min={min}

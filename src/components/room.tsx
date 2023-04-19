@@ -51,6 +51,10 @@ export function Room() {
                     <title>{`Lifeforce | Room ${me.isHost ? '(Host)' : ''}`}</title>
                 </Head>
                 <div className='room'>
+                    <div className='host-actions'>
+                        <button onClick={handleLeaveRoom}><SignOutIcon size={22} /></button>
+                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start Game `}<PlayIcon size={22} /></button> : <></>}
+                    </div>
                     {me.isHost ? <RoomLink /> : <></>}
                     <div className='lobby'>
                         <div className='card'>
@@ -59,10 +63,6 @@ export function Room() {
                         <div className='card'>
                             <Settings />
                         </div>
-                    </div>
-                    <div className='host-actions'>
-                        <button onClick={handleLeaveRoom}>{`Leave `}<SignOutIcon size={22} /> </button>
-                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start Game `}<PlayIcon size={22} /></button> : <></>}
                     </div>
                 </div>
                 <style jsx>
@@ -92,7 +92,7 @@ export function Room() {
                             width: 100%;
                             display: flex;
                             flex-direction: row;
-                            justify-content: space-evenly;
+                            justify-content: space-between;
                             gap: var(--gap-md);
                         }
                         @media screen and (max-width: 768px) {
