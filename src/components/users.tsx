@@ -152,6 +152,7 @@ export function User({ user }: { user: UserType }) {
                     cursor: pointer;
                 }
                 .flex-start{
+                    width: 100%;
                     display: flex;
                     flex-direction: row;
                     justify-content: flex-start;
@@ -189,6 +190,7 @@ export function User({ user }: { user: UserType }) {
                     width: min-content;
                     padding: 2px 4px;
                     width: 100%;
+                    margin-right: var(--gap-md);
                 }
                 `}
             </style>

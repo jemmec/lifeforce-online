@@ -5,12 +5,13 @@ import { GameStateType, PlayerStateType, UserType } from "@/types";
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import { SyncIcon, SignOutIcon } from "@primer/octicons-react";
+import { motion } from "framer-motion";
 
 export function Game() {
   const { socket } = useSocket();
   const { gameState, setGameState } = useGame();
   const { me, room } = useRoom();
-  
+
   useEffect(() => {
     if (socket) {
       socket.on('updated_gamestate', (gameState: GameStateType) => {
@@ -159,25 +160,27 @@ function Me() {
     <>
       {
         myState ?
-          <div className="me">
-            <div className="zone">
-              <div className="mod-button interactable" onClick={() => handleModLife(-1)} ></div>
-              <div className="mod-button interactable" onClick={() => handleModLife(-5)} ></div>
+          <motion.div whileTap={{ scale: 0.97 }} transition={{ duration: 0.08 }} style={{ width: '100%' }}>
+            <div className="me">
+              <div className="zone">
+                <div className="mod-button interactable" onClick={() => handleModLife(-1)} ></div>
+                <div className="mod-button interactable" onClick={() => handleModLife(-5)} ></div>
+                <div className="absolute">
+                  <div className="symbol">{`-`}</div>
+                </div>
+              </div>
+              <div className="zone">
+                <div className="mod-button interactable" onClick={() => handleModLife(+1)} ></div>
+                <div className="mod-button interactable" onClick={() => handleModLife(+5)} ></div>
+                <div className="absolute">
+                  <div className="symbol">{`+`}</div>
+                </div>
+              </div>
               <div className="absolute">
-                <div className="symbol">{`-`}</div>
+                <div className="life">{myState.life}</div>
               </div>
             </div>
-            <div className="zone">
-              <div className="mod-button interactable" onClick={() => handleModLife(+1)} ></div>
-              <div className="mod-button interactable" onClick={() => handleModLife(+5)} ></div>
-              <div className="absolute">
-                <div className="symbol">{`+`}</div>
-              </div>
-            </div>
-            <div className="absolute">
-              <div className="life">{myState.life}</div>
-            </div>
-          </div> :
+          </motion.div> :
           <div className="no-state">{`Please wait for the active game to end.`}</div>
       }
       <style jsx>
@@ -224,7 +227,10 @@ function Me() {
           font-weight: 300;
           opacity: 0.5;
         }
-
+        .no-state{
+          width: 100%;
+          text-align: center;
+        }
         `}
       </style>
     </>

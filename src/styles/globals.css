@@ -72,3 +72,8 @@ button:hover {
     rgba(46, 201, 240, 0.3) 0px 0px 25px,
     rgba(46, 240, 227, 0.2) 0px 0px 40px;
 }
+
+.shadow-md
+{
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}

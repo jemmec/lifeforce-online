@@ -53,7 +53,7 @@ export function Room() {
                 <div className='room'>
                     <div className='host-actions'>
                         <button onClick={handleLeaveRoom}><SignOutIcon size={22} /></button>
-                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start Game `}<PlayIcon size={22} /></button> : <></>}
+                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start `}<PlayIcon size={22} /></button> : <></>}
                     </div>
                     {me.isHost ? <RoomLink /> : <></>}
                     <div className='lobby'>
