@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Yeseva_One } from 'next/font/google'
 import { ReactNode } from 'react';
 const titleFont = Yeseva_One({ subsets: ['latin'], weight: '400' })
@@ -10,7 +11,7 @@ export function Layout({ children }: {
     <>
       <div className='fullscreen'>
         <div className='app-container'>
-          <h1 className={titleFont.className}>{`Lifeforce`}</h1>
+            <h1 className={titleFont.className}>{`Lifeforce`}</h1>
           {children}
         </div>
       </div>
