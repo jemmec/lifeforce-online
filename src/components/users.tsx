@@ -90,7 +90,7 @@ export function User({ user }: { user: UserType }) {
 
     return (
         <>
-            <FadeLeftMotion timing={{duration: 'medium'}}>
+            <FadeLeftMotion timing={{ duration: 'medium' }}>
                 <div key={user.id} className="user">
                     {
                         isMe ? (!edit ? <>
@@ -99,7 +99,7 @@ export function User({ user }: { user: UserType }) {
                                 <b>{user.name}</b>
                             </div>
                             <div className="user-edit" onClick={handleEditUser}>
-                                <PencilIcon size={32} />
+                                <PencilIcon size={28} />
                             </div>
                         </> : <>
                             <div className="flex-start">
@@ -129,7 +129,7 @@ export function User({ user }: { user: UserType }) {
                                 />
                             </div>
                             <div className="user-edit" onClick={handleEndEdit}>
-                                <CheckIcon size={32} />
+                                <CheckIcon size={28} />
                             </div>
                         </>) : <div className="flex-start">
                             <div className="color" />
@@ -180,17 +180,16 @@ export function User({ user }: { user: UserType }) {
                 }
                 input[type='text']
                 {
-                font-size: inherit;
-                border-width: 2px;
-                border-style: dashed;
-                border-radius: var(--border-radius);
-                background: none;
-                color: var(--foreground);
-                width: min-content;
-                padding: 2px 4px;
-                width: 100%;
+                    font-size: inherit;
+                    border-width: 2px;
+                    border-style: dashed;
+                    border-radius: var(--border-radius);
+                    background: none;
+                    color: var(--foreground);
+                    width: min-content;
+                    padding: 2px 4px;
+                    width: 100%;
                 }
-                
                 `}
             </style>
         </>
