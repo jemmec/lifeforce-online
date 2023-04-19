@@ -36,3 +36,15 @@ export function FadeUpMotion({ children, timing }: { children: ReactNode, timing
         </motion.div>
     );
 }
+
+export function FadeLeftMotion({ children, timing }: { children: ReactNode, timing?: TimingProps }) {
+    return (
+        <motion.div
+            transition={{ duration: getDuration(timing?.duration ?? 'medium') }}
+            initial={{ opacity: 0, transform: 'translateX(-25px)' }}
+            animate={{ opacity: 1, transform: 'translateX(0)' }}
+        >
+            {children}
+        </motion.div>
+    );
+}

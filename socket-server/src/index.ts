@@ -36,8 +36,23 @@ const planeswalkers = [
   "Ashiok",
 ];
 
+const colors = [
+  "#F94144",
+  "#F3722C",
+  "#F8961E",
+  "#F9C74F",
+  "#90BE6D",
+  "#43AA8B",
+  "#577590",
+  "#99657D"
+];
+
 function randomName(): string {
   return planeswalkers[Math.floor(Math.random() * planeswalkers.length)];
+}
+
+function randomColor(): string {
+  return colors[Math.floor(Math.random() * colors.length)];
 }
 
 const rooms: Room[] = [];
@@ -93,7 +108,7 @@ io.on('connection', socket => {
     socket.join(roomId);
     const room: Room = new Room(roomId, [], new Settings());
     room.addUser(
-      new User(socket.id, true, '#fff', randomName())
+      new User(socket.id, true, randomColor(), randomName())
     );
     rooms.push(room);
     callback(room);
@@ -106,7 +121,7 @@ io.on('connection', socket => {
     //join the room
     socket.join(room.id);
     //Add user to room (non-host)
-    const user = new User(socket.id, false, '#fff', randomName());
+    const user = new User(socket.id, false, randomColor(), randomName());
     room.addUser(user);
     //broadcast joined_room to all
     io.to(room.id).emit('updated_room', room);
