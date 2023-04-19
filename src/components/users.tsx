@@ -51,7 +51,6 @@ export function User({ user }: { user: UserType }) {
         setEdit(true);
     }
 
-
     function handleColorChange(color: string) {
         setColor(color);
     }

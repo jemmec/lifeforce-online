@@ -60,9 +60,9 @@ export function Room() {
                             <Settings />
                         </div>
                     </div>
-                    <div className='room-actions'>
-                        <button onClick={handleLeaveRoom}>{`Leave `}<SignOutIcon size={20} /> </button>
-                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start Game `}<PlayIcon size={20} /></button> : <></>}
+                    <div className='host-actions'>
+                        <button onClick={handleLeaveRoom}>{`Leave `}<SignOutIcon size={22} /> </button>
+                        {me.isHost ? <button className="glow-button" onClick={handleStartGame}>{`Start Game `}<PlayIcon size={22} /></button> : <></>}
                     </div>
                 </div>
                 <style jsx>
@@ -88,11 +88,11 @@ export function Room() {
                             padding: 18px;
                             width: 100%;
                         }
-                        .room-actions{
+                        .host-actions{
                             width: 100%;
                             display: flex;
                             flex-direction: row;
-                            justify-content: space-between;
+                            justify-content: space-evenly;
                             gap: var(--gap-md);
                         }
                         @media screen and (max-width: 768px) {
