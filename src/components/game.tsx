@@ -10,9 +10,7 @@ export function Game() {
   const { socket } = useSocket();
   const { gameState, setGameState } = useGame();
   const { me, room } = useRoom();
-
-
-
+  
   useEffect(() => {
     if (socket) {
       socket.on('updated_gamestate', (gameState: GameStateType) => {
@@ -20,8 +18,6 @@ export function Game() {
       });
     }
   }, [socket])
-
-
 
   function handleModOtherLife(value: number) {
     if (socket) {
@@ -41,7 +37,6 @@ export function Game() {
       socket.emit('end_game', room.id);
     }
   }
-
 
   return (
     <>
