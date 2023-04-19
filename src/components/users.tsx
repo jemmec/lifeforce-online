@@ -116,9 +116,15 @@ export function User({ user }: { user: UserType }) {
                     align-items: center;
                     gap: var(--gap-md)
                 }
+                .flex-start>b,
+                .flex-start>p{
+                    padding: 2px 4px;
+                }
                 .color{
                     width: 18px;
+                    min-width: 18px;
                     height: 18px;
+                    min-height: 18px;
                     border-radius: 12px;
                     background-color: ${me.color};
                 }

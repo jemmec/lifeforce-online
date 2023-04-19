@@ -33,12 +33,14 @@ a {
 input[type='text']
 {
   font-size: 16px;
-  border: none;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: var(--border-radius);
   background: none;
   color: var(--foreground);
   width: min-content;
-  padding: 0;
-  width: 100%; 
+  padding: 2px 4px;
+  width: 100%;
 }
 
 button {
