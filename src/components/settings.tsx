@@ -17,9 +17,9 @@ export function Settings() {
     return (
         <>
             <div className='settings'>
-                <h3>{`Game Settings`}</h3>
+                <h2>{`Game Settings`}</h2>
                 <div className="items">
-                    <RangeField disabled={!me.isHost} value={room.settings.startingLife} min={1} max={100} onValueChange={(value) => handleSettingsPropChange('startingLife', value)} />
+                    <RangeField disabled={!me.isHost} value={room.settings.startingLife} min={10} max={100} onValueChange={(value) => handleSettingsPropChange('startingLife', value)} />
                 </div>
             </div>
             <style jsx>
@@ -30,7 +30,7 @@ export function Settings() {
                 justify-content: center;
                 gap: var(--gap-md);
             }
-            .settings > h3 {
+            .settings > h2 {
                 align-self: center;
             }
             .items
@@ -67,6 +67,7 @@ export function RangeField({
                 </div>
                 <input
                     type="range"
+                    step={10}
                     min={min}
                     max={max}
                     disabled={disabled}
@@ -77,8 +78,10 @@ export function RangeField({
             <style jsx>
                 {`
                     .range-field{
+                        font-size: 20px;
                         display: flex;
                         flex-direction: column;
+                        gap: var(--gap-sm);
                     }
                     .label{
                         display: flex;

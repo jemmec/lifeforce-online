@@ -29,8 +29,8 @@ export function FadeUpMotion({ children, timing }: { children: ReactNode, timing
     return (
         <motion.div
             transition={{ duration: getDuration(timing?.duration ?? 'medium') }}
-            initial={{ opacity: 0, transform: 'translateY(25px)' }}
-            animate={{ opacity: 1, transform: 'translateY(0)' }}
+            initial={{ opacity: 0, transform: 'translateY(25px) scale(0.9)' }}
+            animate={{ opacity: 1, transform: 'translateY(0) scale(1)' }}
         >
             {children}
         </motion.div>
@@ -41,8 +41,8 @@ export function FadeLeftMotion({ children, timing }: { children: ReactNode, timi
     return (
         <motion.div
             transition={{ duration: getDuration(timing?.duration ?? 'medium') }}
-            initial={{ opacity: 0, transform: 'translateX(-25px)' }}
-            animate={{ opacity: 1, transform: 'translateX(0)' }}
+            initial={{ opacity: 0, transform: 'translateX(-25px) scale(0.9)' }}
+            animate={{ opacity: 1, transform: 'translateX(0) scale(1)' }}
         >
             {children}
         </motion.div>

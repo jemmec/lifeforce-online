@@ -11,7 +11,7 @@ export function Layout({ children }: {
     <>
       <div className='fullscreen'>
         <div className='app-container'>
-          <FadeUpMotion>
+          <FadeUpMotion timing={{duration: 'short'}}>
             <div className='main'>
               <div className="title">
                 <h1 className={titleFont.className}>{`Lifeforce`}</h1>

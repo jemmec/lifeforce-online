@@ -7,12 +7,12 @@ import { ColorWidget } from "./color-widget";
 import { FadeLeftMotion } from "./motions";
 
 export function Users() {
-    const { me, room } = useRoom();
+    const { room } = useRoom();
 
     return (
         <>
             <div className="users">
-                <h3>{`Users`}</h3>
+                <h2>{`Users`}</h2>
                 <div className="user-list">
                     {room.users.map((user: UserType) => <User key={user.id} user={user} />)}
                 </div>
@@ -24,7 +24,7 @@ export function Users() {
                     flex-direction: column;
                     gap: var(--gap-md);
                 }
-                h3{
+                h2{
                     align-self: center;
                 }
                 .user-list{
@@ -90,7 +90,7 @@ export function User({ user }: { user: UserType }) {
 
     return (
         <>
-            <FadeLeftMotion timing={{ duration: 'medium' }}>
+            <FadeLeftMotion timing={{ duration: 'short' }}>
                 <div key={user.id} className="user">
                     {
                         isMe ? (!edit ? <>
