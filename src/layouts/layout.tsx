@@ -11,16 +11,15 @@ export function Layout({ children }: {
     <>
       <div className='fullscreen'>
         <div className='app-container'>
+          <div className="title">
             <h1 className={titleFont.className}>{`Lifeforce`}</h1>
+            <p>{`The lazy-life-counting application`}</p>
+          </div>
           {children}
         </div>
       </div>
       <style jsx>
         {`
-            h1{
-              font-size: 48px;
-              text-decoration: underline;
-            }
             .fullscreen{
               width: 100vw;
               height: 100vh;
@@ -37,7 +36,20 @@ export function Layout({ children }: {
               flex-direction: column;
               justify-content: flex-start;
               align-items: center;
-              gap: var(--gap-md);
+              gap: var(--gap-lg);
+            }
+            .title{
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              align-items: center;
+            }
+            h1{
+              font-size: 48px;
+              text-decoration: underline;
+            }
+            p{
+              font-weight: 300;
             }
           `}
       </style>
