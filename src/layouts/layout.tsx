@@ -19,6 +19,7 @@ export function Layout({ children }: {
         {`
             h1{
               font-size: 48px;
+              text-decoration: underline;
             }
             .fullscreen{
               width: 100vw;

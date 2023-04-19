@@ -3,6 +3,7 @@ import { useSocket } from "@/contexts/socket-context";
 import { UserType } from "@/types";
 import { PencilIcon, CheckIcon } from "@primer/octicons-react";
 import { useState } from "react";
+import { ColorWidget } from "./color-widget";
 
 export function Users() {
     const { me, room } = useRoom();
@@ -43,9 +44,19 @@ export function User({ user }: { user: UserType }) {
     const isMe = user === me;
     const [edit, setEdit] = useState(false);
     const [name, setName] = useState(user.name);
+    const [showColor, setShowColor] = useState(false);
+    const [color, setColor] = useState(user.color);
 
     function handleEditUser() {
         setEdit(true);
+    }
+
+    function handleColorClicked() {
+        setShowColor(true);
+    }
+
+    function handleColorChange(color: string) {
+        setColor(color);
     }
 
     function handleKeyDown(e: any) {
@@ -56,12 +67,28 @@ export function User({ user }: { user: UserType }) {
 
     function handleEndEdit() {
         setEdit(false);
-        //update username locally
-        const newMe = { ...me, name: name };
-        setMe(newMe);
-        //Push update to everyone 
-        if (socket) {
-            socket.emit('update_user', room.id, newMe);
+        //Hide color editor (if open)
+        setShowColor(false);
+        let hasChanges = false;
+        const newMe = { ...me };
+        if (name !== me.name) {
+            //update name
+            hasChanges = true;
+            newMe.name = name;
+        }
+        if (color !== me.color) {
+            //update color
+            hasChanges = true;
+            newMe.color = color;
+        }
+        //Only push the changes if there are any
+        if (hasChanges) {
+            //Update locally
+            setMe(newMe);
+            //Push update to everyone 
+            if (socket) {
+                socket.emit('update_user', room.id, newMe);
+            }
         }
     }
 
@@ -79,7 +106,22 @@ export function User({ user }: { user: UserType }) {
                         </div>
                     </> : <>
                         <div className="flex-start">
-                            <div className="color" />
+                            <div className="color edit" onClick={handleColorClicked} >
+                                <ColorWidget
+                                    colors={[
+                                        "#F94144",
+                                        "#F3722C",
+                                        "#F8961E",
+                                        "#F9C74F",
+                                        "#90BE6D",
+                                        "#43AA8B",
+                                        "#577590",
+                                        "#99657D"
+                                    ]}
+                                    show={showColor}
+                                    onChange={handleColorChange}
+                                />
+                            </div>
                             <input
                                 type='text'
                                 maxLength={32}
@@ -126,7 +168,15 @@ export function User({ user }: { user: UserType }) {
                     height: 18px;
                     min-height: 18px;
                     border-radius: 12px;
-                    background-color: ${me.color};
+                    background-color: ${color};
+                }
+                .color.edit{
+                    cursor: pointer;
+                    position: relative;
+                }
+                .modal{
+                    position: fixed;
+                    top: 0; left: 0; bottom: 0; right: 0;
                 }
                 `}
             </style>
