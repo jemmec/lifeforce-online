@@ -1,12 +1,22 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 
+export type LayoutType = {
+    backgroundStart: string;
+    backgroundEnd: string;
+}
+
+//Default type
+const def: LayoutType = {
+    backgroundStart: '#484c17',
+    backgroundEnd: '#01100d'
+}
 
 export const LayoutContext = createContext<{
-    background: string,
-    setBackground: (value: string) => void
+    layout: LayoutType,
+    setLayout: (layout: LayoutType) => void
 }>({
-    background: '#fff',
-    setBackground: () => { }
+    layout: def,
+    setLayout: () => { }
 });
 
 export function useLayout() {
@@ -14,9 +24,9 @@ export function useLayout() {
 }
 
 export function LayoutProvider({ children }: { children: ReactNode }) {
-    const [background, setBackground] = useState<string>('linear-gradient(180deg, #484c17 0%, #01100d 100%)');
+    const [layout, setLayout] = useState<LayoutType>(def);
     return (
-        <LayoutContext.Provider value={{ background, setBackground }}>
+        <LayoutContext.Provider value={{ layout, setLayout }}>
             {children}
         </LayoutContext.Provider>
     )

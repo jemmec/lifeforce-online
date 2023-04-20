@@ -1,16 +1,26 @@
 import { FadeUpMotion } from '@/components/motions';
 import { useLayout } from '@/contexts/layout-context';
 import { ReactNode } from 'react';
+import { motion } from 'framer-motion';
 
 
 
 export function Layout({ children }: {
   children: ReactNode;
 }) {
-  const { background } = useLayout();
+  const { layout } = useLayout();
   return (
     <>
       <div className='fullscreen'>
+        <div className='background'>
+          <motion.svg height={`100vh`} width={`100vw`}>
+            <motion.linearGradient id='bg-grad' gradientTransform={'rotate(90)'}>
+              <motion.stop offset="0%" animate={{ stopColor: layout.backgroundStart }} />
+              <motion.stop offset="100%" animate={{ stopColor: layout.backgroundEnd }} />
+            </motion.linearGradient>
+            <motion.rect height={`100vh`} width={`100vw`} fill='url(#bg-grad)' />
+          </motion.svg>
+        </div>
         <div className='app-container'>
           <FadeUpMotion timing={{ duration: 'short' }}>
             <div className='main'>
@@ -28,8 +38,13 @@ export function Layout({ children }: {
               flex-direction: column;
               justify-content: center;
               align-items: center;
-              background: ${background};
-              transition: background 0.5s;
+            }
+            .background{  
+              position: fixed;
+              top:0;
+              left: 0;
+              bottom: 0;
+              right: 0;
             }
             .app-container{
               padding: 12px;

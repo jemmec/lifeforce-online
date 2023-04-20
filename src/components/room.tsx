@@ -15,10 +15,13 @@ export function Room() {
     const { me, room, setRoom, setSettings } = useRoom();
     const { socket } = useSocket();
 
-    const { setBackground } = useLayout();
-    useEffect(()=>{
-      setBackground('linear-gradient(180deg, #1d3f5b 0%, #210a28 100%)');
-    },[]);
+    const { setLayout } = useLayout();
+    useEffect(() => {
+        setLayout({
+            backgroundStart: '#1d3f5b',
+            backgroundEnd: '#210a28'
+        });
+    }, []);
 
     useEffect(() => {
         if (socket) {

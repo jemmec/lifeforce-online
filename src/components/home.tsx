@@ -7,9 +7,12 @@ import { useEffect } from "react";
 export function Home({ onNewRoom }: {
   onNewRoom: () => void;
 }) {
-  const { setBackground } = useLayout();
+  const { setLayout } = useLayout();
   useEffect(()=>{
-    setBackground('linear-gradient(180deg, #484c17 0%, #01100d 100%)');
+    setLayout({
+      backgroundStart: '#484c17',
+      backgroundEnd: '#01100d'
+    });
   },[]);
   return (
     <>
