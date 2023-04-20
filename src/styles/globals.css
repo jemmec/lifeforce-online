@@ -32,7 +32,6 @@ body {
 
 body {
   color: var(--foreground);
-  background: linear-gradient(180deg, #484c17 0%, #01100d 100%);
 }
 
 a {
@@ -58,7 +57,7 @@ button:hover {
   background-color: rgba(200, 200, 200, 1);
 }
 
-.input{
+.input {
   pointer-events: all;
   user-select: all;
 }
@@ -73,7 +72,6 @@ button:hover {
     rgba(46, 240, 227, 0.2) 0px 0px 40px;
 }
 
-.shadow-md
-{
+.shadow-md {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }

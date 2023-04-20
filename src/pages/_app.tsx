@@ -1,3 +1,4 @@
+import { LayoutProvider } from '@/contexts/layout-context'
 import { SocketProvider } from '@/contexts/socket-context'
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-theme'
@@ -10,11 +11,13 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <SocketProvider>
-        <ThemeProvider>
-          <div className={inter.className}>
-            <Component {...pageProps} />
-          </div>
-        </ThemeProvider>
+        <LayoutProvider>
+          <ThemeProvider>
+            <div className={inter.className}>
+              <Component {...pageProps} />
+            </div>
+          </ThemeProvider>
+        </LayoutProvider>
       </SocketProvider>
     </>
   );

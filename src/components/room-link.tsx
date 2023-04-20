@@ -5,8 +5,6 @@ import { CopyIcon } from "@primer/octicons-react";
 
 export function RoomLink() {
   const { room } = useRoom();
-
-
   return (
     <>
       <div className='room-link'>
@@ -33,6 +31,8 @@ export function RoomLink() {
 }
 
 export function CopyLink({ url }: { url: string }) {
+  //TODO: Add timer
+  
   const [copied, setCopied] = useState(false);
   function handleLinkCopy() {
     setCopied(true);

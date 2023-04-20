@@ -6,6 +6,11 @@ import { ReactNode } from 'react';
 export function Layout({ children }: {
   children: ReactNode;
 }) {
+  
+
+
+
+
   return (
     <>
       <div className='fullscreen'>
@@ -26,6 +31,7 @@ export function Layout({ children }: {
               flex-direction: column;
               justify-content: center;
               align-items: center;
+              background: linear-gradient(180deg, #484c17 0%, #01100d 100%);
             }
             .app-container{
               padding: 12px;
