@@ -61,6 +61,11 @@ function p(log: string) {
   console.log(`Socket.io: ${log}`);
 }
 
+function findRoom(roomId: string, onFound: (room: Room) => void) {
+
+}
+
+
 function leaveRoom(socket: Socket, roomId: string) {
   const room = rooms.find(x => x.id === roomId);
   if (!room) return;
@@ -121,7 +126,7 @@ io.on('connection', socket => {
     //Check to see if the room is full
     if (room.users.length === room.settings.seats) {
       //Emit error
-      socket.emit('room_error', new RoomError(roomId, 501, "Room is full"))
+      socket.emit('room_error', new RoomError(roomId, 403, "Sorry, there are no more seats left at the table."))
       //Return null
       callback(null);
       return;

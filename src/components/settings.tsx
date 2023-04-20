@@ -20,10 +20,10 @@ export function Settings() {
                 <h2>{`Game Settings`}</h2>
                 <div className="items">
                     <RangeField
-                    label="Seats"
+                        label="Seats"
                         disabled={!me.isHost}
                         value={room.settings.seats}
-                        min={2}
+                        min={room.users.length}
                         max={12}
                         steps={1}
                         onValueChange={(value) => handleSettingsPropChange('seats', value)}

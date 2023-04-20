@@ -1,6 +1,7 @@
 import { useRoom } from "@/contexts/room-context";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { CopyIcon } from "@primer/octicons-react";
 
 export function RoomLink() {
   const { room } = useRoom();
@@ -31,8 +32,6 @@ export function RoomLink() {
   )
 }
 
-
-
 export function CopyLink({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
   function handleLinkCopy() {
@@ -42,14 +41,17 @@ export function CopyLink({ url }: { url: string }) {
   return (
     <>
       <div className="copy-link">
-        <motion.div>
+        <motion.div transition={{ duration: 0.5 }} initial={{ opacity: 1 }} animate={copied ? { opacity: 0 } : {}}>
           <div className='link interactable' onClick={handleLinkCopy}>
             {url}
           </div>
         </motion.div>
         <div className="absolute">
-          <motion.div initial={{ opacity: 0, transform: 'translateY(20px)' }} animate={copied ? { opacity: 1, transform: 'translateY(0)' } : {}}>
-            {`Copied!`}
+          <motion.div transition={{ duration: 0.5 }} initial={{ opacity: 0 }} animate={copied ? { opacity: 1 } : {}}>
+            <div>
+              {`Copied `}
+              <CopyIcon size={22} />
+            </div>
           </motion.div>
         </div>
       </div>
@@ -57,7 +59,7 @@ export function CopyLink({ url }: { url: string }) {
         {`
         .copy-link{
           position: relative;
-          color: black;
+          color: rgb(20,20,20);
           font-size: 22px;
           font-weight: 600;
           width: 100%;
@@ -75,12 +77,8 @@ export function CopyLink({ url }: { url: string }) {
           cursor: pointer;
         }
         .absolute{
-          font-size: 18px;
           position: absolute;
-          top: -30px;
-          right: 0;
-          color: rgb(26, 196, 223);
-          padding: 4px 8px;
+          right: 0; left: 0;
           border-radius: var(--border-radius);
         }
         `}

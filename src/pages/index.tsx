@@ -20,21 +20,26 @@ export default function Index() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='floating'>
-          <RoomError />
-        </div>
         <Layout>
           <_ />
         </Layout>
+        <div className='center'>
+          <RoomError />
+        </div>
       </main>
       <style jsx>
         {`
-        .floating{
+        .center{
           position: absolute;
           top: 0;
           left: 0;
           bottom: 0;
           right: 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          z-index: 99;
         }
         `}
       </style>
