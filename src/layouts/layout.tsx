@@ -29,6 +29,7 @@ export function Layout({ children }: {
               justify-content: center;
               align-items: center;
               background: ${background};
+              transition: background 0.5s;
             }
             .app-container{
               padding: 12px;

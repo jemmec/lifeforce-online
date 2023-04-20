@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import { SyncIcon, SignOutIcon } from "@primer/octicons-react";
 import { motion } from "framer-motion";
+import { useLayout } from "@/contexts/layout-context";
 
 export function Game() {
   const { socket } = useSocket();

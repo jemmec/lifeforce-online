@@ -9,10 +9,16 @@ import { Settings } from "./settings";
 import { Users } from "./users";
 import { RoomType, SettingsType, GameStateType } from "@/types";
 import { SignOutIcon, PlayIcon } from "@primer/octicons-react";
+import { useLayout } from "@/contexts/layout-context";
 
 export function Room() {
     const { me, room, setRoom, setSettings } = useRoom();
     const { socket } = useSocket();
+
+    const { setBackground } = useLayout();
+    useEffect(()=>{
+      setBackground('linear-gradient(180deg, #1d3f5b 0%, #210a28 100%)');
+    },[]);
 
     useEffect(() => {
         if (socket) {
