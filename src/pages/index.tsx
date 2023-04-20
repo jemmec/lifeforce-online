@@ -1,5 +1,6 @@
 import { Home } from '@/components/home';
 import { Room } from '@/components/room';
+import { RoomError } from '@/components/room-error';
 import { RoomContext } from '@/contexts/room-context';
 import { useSocket } from '@/contexts/socket-context';
 import { Layout } from '@/layouts/layout';
@@ -19,10 +20,24 @@ export default function Index() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <div className='floating'>
+          <RoomError />
+        </div>
         <Layout>
           <_ />
         </Layout>
       </main>
+      <style jsx>
+        {`
+        .floating{
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+        }
+        `}
+      </style>
     </>
   )
 }

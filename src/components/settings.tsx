@@ -19,7 +19,24 @@ export function Settings() {
             <div className='settings'>
                 <h2>{`Game Settings`}</h2>
                 <div className="items">
-                    <RangeField disabled={!me.isHost} value={room.settings.startingLife} min={10} max={100} onValueChange={(value) => handleSettingsPropChange('startingLife', value)} />
+                    <RangeField
+                    label="Seats"
+                        disabled={!me.isHost}
+                        value={room.settings.seats}
+                        min={2}
+                        max={12}
+                        steps={1}
+                        onValueChange={(value) => handleSettingsPropChange('seats', value)}
+                    />
+                    <RangeField
+                        label="Starting life"
+                        disabled={!me.isHost}
+                        value={room.settings.startingLife}
+                        min={10}
+                        max={100}
+                        steps={10}
+                        onValueChange={(value) => handleSettingsPropChange('startingLife', value)}
+                    />
                 </div>
             </div>
             <style jsx>
@@ -49,12 +66,16 @@ export function RangeField({
     value,
     min,
     max,
+    steps,
+    label,
     onValueChange,
     disabled
 }: {
     value: number,
     min: number,
     max: number,
+    steps: number,
+    label: string,
     onValueChange: (value: number) => void,
     disabled: boolean
 }) {
@@ -62,13 +83,13 @@ export function RangeField({
         <>
             <div className="range-field">
                 <div className="label">
-                    <div>{`Starting life`}</div>
+                    <div>{label}</div>
                     <div>{value}</div>
                 </div>
                 <input
                     className="interactable"
                     type="range"
-                    step={10}
+                    step={steps}
                     min={min}
                     max={max}
                     disabled={disabled}
