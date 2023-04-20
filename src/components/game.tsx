@@ -68,7 +68,7 @@ export function Game() {
           <button onClick={() => handleModOtherLife(-1)}>{`decrease other`}</button>
           <button onClick={() => handleModOtherLife(+1)}>{`increase other`}</button>
         </div> */}
-        <AdvancedCounter />
+        <Counter />
       </div>
       <style jsx>
         {`
@@ -137,7 +137,7 @@ function Enemy({ playerState, user }: { playerState: PlayerStateType, user: User
   )
 }
 
-function AdvancedCounter() {
+function Counter() {
   const { socket } = useSocket();
   const { gameState, setGameState } = useGame();
   const { me, room } = useRoom();
@@ -167,36 +167,27 @@ function AdvancedCounter() {
     const { left, top, width, height } = element.getBoundingClientRect();
     const x = e.clientX - (left + width / 2);
     const y = e.clientY - (top + height / 2);
-
-    console.log({ x, y });
-
     setMousePosition({ x, y });
   }
   return (
     <>
       {
         myState ?
-          <div className="counter" style={{ width: '100%', perspective: '100px' }}>
+          <div className="counter" style={{ width: '100%', perspective: '200px' }}>
             <motion.div
               onMouseMove={handleMouseMove}
               whileTap={{ rotateY: mousePosition.x / 300, rotateX: -mousePosition.y / 50 }}
-              transition={{ duration: 0.25, ease: 'backOut' }}
+              transition={{ duration: 0.2, ease: 'backOut' }}
               style={{ width: '100%' }}
             >
-              <div className="flex-row">
+              <div className="container shadow-lg">
                 <div className="zone">
-                  <div className="mod-button interactable" onClick={() => handleModLife(-1)} ></div>
-                  <div className="mod-button interactable" onClick={() => handleModLife(-5)} ></div>
-                  <div className="absolute">
-                    <div className="symbol">{`-`}</div>
-                  </div>
+                  <ModButton label="- 1" rotation="90deg" onClick={() => handleModLife(-1)} />
+                  <ModButton label="- 5" rotation="90deg" onClick={() => handleModLife(-5)} />
                 </div>
                 <div className="zone">
-                  <div className="mod-button interactable" onClick={() => handleModLife(+1)} ></div>
-                  <div className="mod-button interactable" onClick={() => handleModLife(+5)} ></div>
-                  <div className="absolute">
-                    <div className="symbol">{`+`}</div>
-                  </div>
+                  <ModButton label="+ 1" rotation="-90deg" onClick={() => handleModLife(+1)} />
+                  <ModButton label="+ 5" rotation="-90deg" onClick={() => handleModLife(+5)} />
                 </div>
                 <div className="absolute">
                   <div className="life">{myState.life}</div>
@@ -210,15 +201,15 @@ function AdvancedCounter() {
         {`
         .counter{
           width: 100%;
-          
         }
-        .flex-row{
+        .container{
           background-color: ${me.color};
           color: rgb(15,15,15);
           border-radius: var(--border-radius);
           position: relative;
           display: flex;
           flex-direction: row;
+          overflow: hidden;
         }
         .absolute{
           position: absolute;
@@ -243,19 +234,59 @@ function AdvancedCounter() {
           flex-direction: column;
           position: relative;
         }
-        .mod-button{
-          cursor: pointer;
-          height: 100px;
-        }
-        .symbol{
-          line-height: 0px;
-          font-size: 96px;
-          font-weight: 300;
-          opacity: 0.5;
-        }
         .no-state{
           width: 100%;
           text-align: center;
+        }
+        `}
+      </style>
+    </>
+  )
+}
+
+export function ModButton({ label, onClick, rotation }: { label: string, onClick: () => void, rotation: string }) {
+  return (
+    <>
+      <div className="mod-button interactable" onClick={onClick} >
+        <motion.div className="interactable"
+          style={{
+            borderRadius: '6px',
+            opacity: 0,
+            width: '100%',
+            height: '100%',
+            background: `linear-gradient(${rotation},rgba(10,10,10,0.3), rgba(10,10,10,0))`
+          }}
+          whileTap={{ opacity: 1 }}
+        >
+        </motion.div>
+        <div className="absolute">
+            <div className="symbol">{label}</div>
+        </div>
+      </div>
+      <style jsx>
+        {`
+        .mod-button{
+          height: 100px;
+          position: relative;
+          cursor: pointer;
+          padding: 6px;
+        }
+        .symbol{
+          line-height: 0;
+          font-size: 48px;
+          font-weight: 600;
+          opacity: 0.3;
+        }
+        .absolute{
+          position: absolute;
+          left: 0; 
+          right: 0; 
+          bottom: 0;
+          top: 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
         }
         `}
       </style>
