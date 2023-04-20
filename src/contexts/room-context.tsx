@@ -9,7 +9,7 @@ export const RoomContext = createContext<{
     setMe: (user: UserType) => void,
 }>({
     me: { id: '', color: '', isHost: false, name: '' },
-    room: { id: '', users: [], settings: { startingLife: 40 }, gameState: null },
+    room: { id: '', users: [], settings: { startingLife: 40, seats: 4 }, gameState: null },
     setRoom: () => { },
     setSettings: () => { },
     setMe: () => { }
