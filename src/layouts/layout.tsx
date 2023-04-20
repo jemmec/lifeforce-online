@@ -1,4 +1,5 @@
 import { FadeUpMotion } from '@/components/motions';
+import { useLayout } from '@/contexts/layout-context';
 import { ReactNode } from 'react';
 
 
@@ -6,16 +7,12 @@ import { ReactNode } from 'react';
 export function Layout({ children }: {
   children: ReactNode;
 }) {
-  
-
-
-
-
+  const { background } = useLayout();
   return (
     <>
       <div className='fullscreen'>
         <div className='app-container'>
-          <FadeUpMotion timing={{duration: 'short'}}>
+          <FadeUpMotion timing={{ duration: 'short' }}>
             <div className='main'>
               {children}
             </div>
@@ -31,7 +28,7 @@ export function Layout({ children }: {
               flex-direction: column;
               justify-content: center;
               align-items: center;
-              background: linear-gradient(180deg, #484c17 0%, #01100d 100%);
+              background: ${background};
             }
             .app-container{
               padding: 12px;
