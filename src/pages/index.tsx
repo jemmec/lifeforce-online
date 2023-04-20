@@ -1,6 +1,8 @@
 import { Home } from '@/components/home';
 import { Room } from '@/components/room';
 import { RoomError } from '@/components/room-error';
+import { Title } from '@/components/title';
+import { useLayout } from '@/contexts/layout-context';
 import { RoomContext } from '@/contexts/room-context';
 import { useSocket } from '@/contexts/socket-context';
 import { Layout } from '@/layouts/layout';
@@ -117,7 +119,7 @@ function _() {
     }
   }, [socket, room])
 
-  if (!socket && !room) return <div>{`Connecting...`}</div>
+  if (!socket && !room) return <InitalConnection />
   else if (socket && !room) return <Home onNewRoom={handleNewRoom} />
   else if (room && me) return (
     <RoomContext.Provider
@@ -132,4 +134,40 @@ function _() {
     </RoomContext.Provider>
   )
   else return <div>{`Something went wrong.`}</div>
+}
+
+
+export function InitalConnection() {
+  const { setLayout } = useLayout();
+  useEffect(() => {
+    setLayout({
+      backgroundStart: '#9a9a9a',
+      backgroundEnd: '#4c4c4c',
+    });
+  }, []);
+  return (
+    <>
+      <div className='init'>
+        <div style={{opacity:0.5}}>
+          <Title />
+        </div>
+        <div className='message' >{`Connecting to server...`}</div>
+      </div>
+      <style jsx>
+        {`
+          .init{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: var(--gap-lg);
+          }
+          .message{
+            font-size: 22px;
+            opacity: 0.5;
+          }
+        `}
+      </style>
+    </>
+  )
 }

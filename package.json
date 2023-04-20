@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently --kill-others \"next dev\" \"npm --prefix socket-server run start\"",
+    "server": "npm --prefix socket-server run start",
+    "both": "concurrently --kill-others \"next dev\" \"npm --prefix socket-server run start\"",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
