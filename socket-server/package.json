@@ -1,0 +1,26 @@
+{
+  "name": "socket-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node build/src/server.js",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/koa": "^2.13.6",
+    "@types/node": "^14.11.2",
+    "gts": "^3.1.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "koa": "^2.14.2",
+    "socket.io": "^4.6.1"
+  }
+}
