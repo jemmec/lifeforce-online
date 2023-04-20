@@ -66,10 +66,10 @@ export function Room() {
                     </div>
                     {me.isHost ? <RoomLink /> : <></>}
                     <div className='lobby'>
-                        <div className='card'>
+                        <div className='card shadow-sm'>
                             <Users />
                         </div>
-                        <div className='card'>
+                        <div className='card shadow-sm'>
                             <Settings />
                         </div>
                     </div>

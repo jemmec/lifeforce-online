@@ -7,6 +7,7 @@ import { useEffect } from "react";
 export function Home({ onNewRoom }: {
   onNewRoom: () => void;
 }) {
+  
   const { setLayout } = useLayout();
   useEffect(()=>{
     setLayout({
@@ -14,6 +15,7 @@ export function Home({ onNewRoom }: {
       backgroundEnd: '#3b4f2d',
     });
   },[]);
+  
   return (
     <>
       <Head>

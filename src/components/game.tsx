@@ -5,7 +5,8 @@ import { GameStateType, PlayerStateType, UserType } from "@/types";
 import Head from "next/head";
 import React, { useState, useEffect, useRef } from "react";
 import { SyncIcon, SignOutIcon } from "@primer/octicons-react";
-import { motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
+import { useLayout } from "@/contexts/layout-context";
 
 export function Game() {
   const { socket } = useSocket();
@@ -85,7 +86,7 @@ export function Game() {
               flex-direction: row;
               justify-content: center;
               flex-wrap: wrap;
-              gap: var(--gap-sm);
+              gap: var(--gap-lg);
               padding: 12px;
             }
             .host-actions{
@@ -100,13 +101,35 @@ export function Game() {
   )
 }
 
+export const enemyVariants: Variants = {
+  hit: {
+    scale: 0.95,
+    transition: {
+      ease: 'easeOut',
+      duration: 0.3
+    }
+  },
+};
+
 function Enemy({ playerState, user }: { playerState: PlayerStateType, user: UserType }) {
+  const [prevLife, setPrevLife] = useState<number>(0);
+
+  useEffect(() => {
+    if (playerState.life !== prevLife) {
+      //Do animation
+      setPrevLife(playerState.life);
+    }
+  }, [playerState])
+
+
   return (
     <>
-      <div key={playerState.userId} className="enemy">
-        <div className="name">{user.name}</div>
-        <div className="life">{playerState.life}</div>
-      </div>
+      <motion.div key={prevLife} variants={enemyVariants} animate='hit'>
+        <div className="enemy shadow-sm">
+          <div className="name">{user.name}</div>
+          <div className="life">{playerState.life}</div>
+        </div>
+      </motion.div>
       <style jsx>
         {`
         .enemy{
@@ -129,7 +152,7 @@ function Enemy({ playerState, user }: { playerState: PlayerStateType, user: User
         .life{
           font-size: 72px;
           font-weight: 700;
-          opacity: 0.8;
+          opacity: 0.75;
         }
         `}
       </style>
@@ -142,6 +165,7 @@ function Counter() {
   const { gameState, setGameState } = useGame();
   const { me, room } = useRoom();
   const [myState, setMyState] = useState<PlayerStateType | null>();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const ms = gameState.playerStates.find(x => x.userId === me.id);
@@ -157,10 +181,14 @@ function Counter() {
     }
   }
 
-  const [mousePosition, setMousePosition] = useState({
-    x: 0,
-    y: 0
-  });
+  //TODO: Move Game out of Room
+  // const { setLayout } = useLayout();
+  // useEffect(()=>{
+  //   setLayout({
+  //     backgroundStart: '#2b2b2b',
+  //     backgroundEnd: '#111111',
+  //   });
+  // },[]);
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const element = e.currentTarget;
@@ -177,10 +205,13 @@ function Counter() {
             <motion.div
               onMouseMove={handleMouseMove}
               whileTap={{ rotateY: mousePosition.x / 300, rotateX: -mousePosition.y / 50 }}
-              transition={{ duration: 0.2, ease: 'backOut' }}
+              transition={{ duration: 0.15, ease: 'backOut' }}
               style={{ width: '100%' }}
             >
-              <div className="container shadow-lg">
+              <div className="container shadow-md">
+                <div className="absolute">
+                  <div className="life">{myState.life}</div>
+                </div>
                 <div className="zone">
                   <ModButton label="- 1" rotation="90deg" onClick={() => handleModLife(-1)} />
                   <ModButton label="- 5" rotation="90deg" onClick={() => handleModLife(-5)} />
@@ -188,9 +219,6 @@ function Counter() {
                 <div className="zone">
                   <ModButton label="+ 1" rotation="-90deg" onClick={() => handleModLife(+1)} />
                   <ModButton label="+ 5" rotation="-90deg" onClick={() => handleModLife(+5)} />
-                </div>
-                <div className="absolute">
-                  <div className="life">{myState.life}</div>
                 </div>
               </div>
             </motion.div>
@@ -226,7 +254,7 @@ function Counter() {
           line-height: 0px;
           font-size: 128px;
           font-weight: 700;
-          opacity: 0.8;
+          opacity: 0.75;
         }
         .zone{
           width: 100%;
@@ -248,6 +276,9 @@ export function ModButton({ label, onClick, rotation }: { label: string, onClick
   return (
     <>
       <div className="mod-button interactable" onClick={onClick} >
+        <div className="absolute">
+          <div className="symbol">{label}</div>
+        </div>
         <motion.div className="interactable"
           style={{
             borderRadius: '6px',
@@ -256,12 +287,10 @@ export function ModButton({ label, onClick, rotation }: { label: string, onClick
             height: '100%',
             background: `linear-gradient(${rotation},rgba(10,10,10,0.3), rgba(10,10,10,0))`
           }}
+          transition={{ duration: 0.2 }}
           whileTap={{ opacity: 1 }}
         >
         </motion.div>
-        <div className="absolute">
-            <div className="symbol">{label}</div>
-        </div>
       </div>
       <style jsx>
         {`

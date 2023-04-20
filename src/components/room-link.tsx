@@ -40,7 +40,7 @@ export function CopyLink({ url }: { url: string }) {
   }
   return (
     <>
-      <div className="copy-link interactable" onClick={handleLinkCopy}>
+      <div className="copy-link interactable shadow-sm" onClick={handleLinkCopy}>
         <motion.div transition={{ duration: 0.2 }} initial={{ opacity: 1 }} animate={copied ? { opacity: 0 } : {}}>
           <div className='link'>
             {url}

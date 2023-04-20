@@ -25,7 +25,7 @@ export function Layout({ children }: {
           </motion.svg>
         </div>
         <div className='app-container'>
-          <FadeUpMotion timing={{ duration: 'short' }}>
+          <FadeUpMotion timing={{ duration: 'medium' }}>
             <div className='main'>
               {children}
             </div>
