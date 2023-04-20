@@ -87,22 +87,27 @@ export class User {
 export class Settings {
 
     startingLife: number;
+    seats: number;
 
     constructor() {
         this.startingLife = 40;
+        this.seats = 4;
     }
 
 }
 
-export class SocketError {
+export class RoomError {
 
+    roomId: string;
     code: number;
     message: string;
 
     constructor(
+        roomId: string,
         code: number,
         message: string,
     ) {
+        this.roomId = roomId;
         this.code = code;
         this.message = message;
     }

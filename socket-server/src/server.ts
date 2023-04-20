@@ -1,7 +1,7 @@
 import * as Koa from 'koa';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import { Room, Settings, User } from './types';
+import { Room, Settings, RoomError, User } from './types';
 
 const app = new Koa();
 const httpServer = createServer(app.callback());
@@ -118,6 +118,14 @@ io.on('connection', socket => {
     //get the room from the list
     const room = rooms.find(x => x.id === roomId);
     if (!room) return;
+    //Check to see if the room is full
+    if (room.users.length === room.settings.seats) {
+      //Emit error
+      socket.emit('room_error', new RoomError(roomId, 501, "Room is full"))
+      //Return null
+      callback(null);
+      return;
+    }
     //join the room
     socket.join(room.id);
     //Add user to room (non-host)

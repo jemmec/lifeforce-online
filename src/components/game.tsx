@@ -59,7 +59,7 @@ export function Game() {
               //Early out if me
               if (!user || user === me) return <></>;
               return (
-                <Enemy playerState={playerState} user={user} />
+                <Enemy key={user.id} playerState={playerState} user={user} />
               );
             })
           }
