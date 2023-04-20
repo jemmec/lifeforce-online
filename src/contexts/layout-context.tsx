@@ -8,8 +8,8 @@ export type LayoutType = {
 
 //Default type
 const def: LayoutType = {
-    backgroundStart: '#484c17',
-    backgroundEnd: '#01100d',
+    backgroundStart: '#000',
+    backgroundEnd: '#000',
     backgroundRotation: 90
 }
 

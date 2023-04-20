@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { Transition, motion } from 'framer-motion';
 
 const backgroundTransition: Transition = {
-  duration: 0.35,
+  duration: 0.5,
   ease: 'circOut'
 };
 
