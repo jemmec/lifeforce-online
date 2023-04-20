@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { SmallText } from "./small-text";
-import { FadeUpMotion } from "./motions";
 import { Title } from "./title";
 
 export function Home({ onNewRoom }: {
