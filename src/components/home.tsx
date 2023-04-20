@@ -10,8 +10,8 @@ export function Home({ onNewRoom }: {
   const { setLayout } = useLayout();
   useEffect(()=>{
     setLayout({
-      backgroundStart: '#484c17',
-      backgroundEnd: '#01100d'
+      backgroundStart: '#5f8a45',
+      backgroundEnd: '#3b4f2d',
     });
   },[]);
   return (

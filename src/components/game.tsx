@@ -3,10 +3,9 @@ import { useRoom } from "@/contexts/room-context";
 import { useSocket } from "@/contexts/socket-context";
 import { GameStateType, PlayerStateType, UserType } from "@/types";
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { SyncIcon, SignOutIcon } from "@primer/octicons-react";
 import { motion } from "framer-motion";
-import { useLayout } from "@/contexts/layout-context";
 
 export function Game() {
   const { socket } = useSocket();
@@ -65,11 +64,11 @@ export function Game() {
             })
           }
         </div>
-        <div>
+        {/* <div>
           <button onClick={() => handleModOtherLife(-1)}>{`decrease other`}</button>
           <button onClick={() => handleModOtherLife(+1)}>{`increase other`}</button>
-        </div>
-        <Me />
+        </div> */}
+        <AdvancedCounter />
       </div>
       <style jsx>
         {`
@@ -138,7 +137,7 @@ function Enemy({ playerState, user }: { playerState: PlayerStateType, user: User
   )
 }
 
-function Me() {
+function AdvancedCounter() {
   const { socket } = useSocket();
   const { gameState, setGameState } = useGame();
   const { me, room } = useRoom();
@@ -157,37 +156,63 @@ function Me() {
       socket.emit('mod_life', room.id, value);
     }
   }
+
+  const [mousePosition, setMousePosition] = useState({
+    x: 0,
+    y: 0
+  });
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const element = e.currentTarget;
+    const { left, top, width, height } = element.getBoundingClientRect();
+    const x = e.clientX - (left + width / 2);
+    const y = e.clientY - (top + height / 2);
+
+    console.log({ x, y });
+
+    setMousePosition({ x, y });
+  }
   return (
     <>
       {
         myState ?
-          <motion.div whileTap={{ scale: 0.97 }} transition={{ duration: 0.08 }} style={{ width: '100%' }}>
-            <div className="me">
-              <div className="zone">
-                <div className="mod-button interactable" onClick={() => handleModLife(-1)} ></div>
-                <div className="mod-button interactable" onClick={() => handleModLife(-5)} ></div>
+          <div className="counter" style={{ width: '100%', perspective: '100px' }}>
+            <motion.div
+              onMouseMove={handleMouseMove}
+              whileTap={{ rotateY: mousePosition.x / 300, rotateX: -mousePosition.y / 50 }}
+              transition={{ duration: 0.25, ease: 'backOut' }}
+              style={{ width: '100%' }}
+            >
+              <div className="flex-row">
+                <div className="zone">
+                  <div className="mod-button interactable" onClick={() => handleModLife(-1)} ></div>
+                  <div className="mod-button interactable" onClick={() => handleModLife(-5)} ></div>
+                  <div className="absolute">
+                    <div className="symbol">{`-`}</div>
+                  </div>
+                </div>
+                <div className="zone">
+                  <div className="mod-button interactable" onClick={() => handleModLife(+1)} ></div>
+                  <div className="mod-button interactable" onClick={() => handleModLife(+5)} ></div>
+                  <div className="absolute">
+                    <div className="symbol">{`+`}</div>
+                  </div>
+                </div>
                 <div className="absolute">
-                  <div className="symbol">{`-`}</div>
+                  <div className="life">{myState.life}</div>
                 </div>
               </div>
-              <div className="zone">
-                <div className="mod-button interactable" onClick={() => handleModLife(+1)} ></div>
-                <div className="mod-button interactable" onClick={() => handleModLife(+5)} ></div>
-                <div className="absolute">
-                  <div className="symbol">{`+`}</div>
-                </div>
-              </div>
-              <div className="absolute">
-                <div className="life">{myState.life}</div>
-              </div>
-            </div>
-          </motion.div> :
-          <div className="no-state">{`Please wait for the active game to end.`}</div>
+            </motion.div>
+          </div>
+          : <div className="no-state">{`Please wait for the active game to end.`}</div>
       }
       <style jsx>
         {`
-        .me{
+        .counter{
           width: 100%;
+          
+        }
+        .flex-row{
           background-color: ${me.color};
           color: rgb(15,15,15);
           border-radius: var(--border-radius);
@@ -208,7 +233,7 @@ function Me() {
         }
         .life{
           line-height: 0px;
-          font-size: 82px;
+          font-size: 128px;
           font-weight: 700;
           opacity: 0.8;
         }
@@ -220,7 +245,7 @@ function Me() {
         }
         .mod-button{
           cursor: pointer;
-          height: 80px;
+          height: 100px;
         }
         .symbol{
           line-height: 0px;

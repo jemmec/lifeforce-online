@@ -28,7 +28,7 @@ export type TimingProps = {
 export function FadeUpMotion({ children, timing }: { children: ReactNode, timing?: TimingProps }) {
     return (
         <motion.div
-            transition={{ duration: getDuration(timing?.duration ?? 'medium') }}
+            transition={{ duration: getDuration(timing?.duration ?? 'medium'), ease: 'backOut'}}
             initial={{ opacity: 0, transform: 'translateY(25px) scale(0.9)' }}
             animate={{ opacity: 1, transform: 'translateY(0) scale(1)' }}
         >
@@ -40,7 +40,7 @@ export function FadeUpMotion({ children, timing }: { children: ReactNode, timing
 export function FadeLeftMotion({ children, timing }: { children: ReactNode, timing?: TimingProps }) {
     return (
         <motion.div
-            transition={{ duration: getDuration(timing?.duration ?? 'medium') }}
+            transition={{ duration: getDuration(timing?.duration ?? 'medium'), ease: 'backOut' }}
             initial={{ opacity: 0, transform: 'translateX(-25px) scale(0.9)' }}
             animate={{ opacity: 1, transform: 'translateX(0) scale(1)' }}
         >

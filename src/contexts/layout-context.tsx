@@ -3,12 +3,14 @@ import { ReactNode, createContext, useContext, useState } from "react";
 export type LayoutType = {
     backgroundStart: string;
     backgroundEnd: string;
+    backgroundRotation?: number;
 }
 
 //Default type
 const def: LayoutType = {
     backgroundStart: '#484c17',
-    backgroundEnd: '#01100d'
+    backgroundEnd: '#01100d',
+    backgroundRotation: 90
 }
 
 export const LayoutContext = createContext<{

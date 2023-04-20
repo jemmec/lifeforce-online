@@ -18,8 +18,8 @@ export function Room() {
     const { setLayout } = useLayout();
     useEffect(() => {
         setLayout({
-            backgroundStart: '#1d3f5b',
-            backgroundEnd: '#210a28'
+            backgroundStart: '#5482a9',
+            backgroundEnd: '#294870',
         });
     }, []);
 

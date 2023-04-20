@@ -32,7 +32,7 @@ export function RoomLink() {
 
 export function CopyLink({ url }: { url: string }) {
   //TODO: Add timer
-  
+
   const [copied, setCopied] = useState(false);
   function handleLinkCopy() {
     setCopied(true);
@@ -40,14 +40,14 @@ export function CopyLink({ url }: { url: string }) {
   }
   return (
     <>
-      <div className="copy-link">
-        <motion.div transition={{ duration: 0.5 }} initial={{ opacity: 1 }} animate={copied ? { opacity: 0 } : {}}>
-          <div className='link interactable' onClick={handleLinkCopy}>
+      <div className="copy-link interactable" onClick={handleLinkCopy}>
+        <motion.div transition={{ duration: 0.2 }} initial={{ opacity: 1 }} animate={copied ? { opacity: 0 } : {}}>
+          <div className='link'>
             {url}
           </div>
         </motion.div>
         <div className="absolute">
-          <motion.div transition={{ duration: 0.5 }} initial={{ opacity: 0 }} animate={copied ? { opacity: 1 } : {}}>
+          <motion.div transition={{ duration: 0.2 }} initial={{ opacity: 0 }} animate={copied ? { opacity: 1 } : {}}>
             <div>
               {`Copied `}
               <CopyIcon size={22} />
@@ -71,10 +71,10 @@ export function CopyLink({ url }: { url: string }) {
           border-radius: var(--border-radius);
           padding: 12px;
           background-color: rgba(200,200,200,0.5);
+          cursor: pointer;
         }
         .link{
           text-decoration: underline;
-          cursor: pointer;
         }
         .absolute{
           position: absolute;

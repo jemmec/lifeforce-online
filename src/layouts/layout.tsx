@@ -1,9 +1,12 @@
 import { FadeUpMotion } from '@/components/motions';
 import { useLayout } from '@/contexts/layout-context';
 import { ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { Transition, motion } from 'framer-motion';
 
-
+const backgroundTransition: Transition = {
+  duration: 0.35,
+  ease: 'circOut'
+};
 
 export function Layout({ children }: {
   children: ReactNode;
@@ -14,9 +17,9 @@ export function Layout({ children }: {
       <div className='fullscreen'>
         <div className='background'>
           <motion.svg height={`100vh`} width={`100vw`}>
-            <motion.linearGradient id='bg-grad' gradientTransform={'rotate(90)'}>
-              <motion.stop offset="0%" animate={{ stopColor: layout.backgroundStart }} />
-              <motion.stop offset="100%" animate={{ stopColor: layout.backgroundEnd }} />
+            <motion.linearGradient id='bg-grad' transition={backgroundTransition} animate={{ gradientTransform: `rotate(${layout.backgroundRotation ?? 90})` }}>
+              <motion.stop offset="0%" transition={backgroundTransition} animate={{ stopColor: layout.backgroundStart }} />
+              <motion.stop offset="100%" transition={backgroundTransition} animate={{ stopColor: layout.backgroundEnd }} />
             </motion.linearGradient>
             <motion.rect height={`100vh`} width={`100vw`} fill='url(#bg-grad)' />
           </motion.svg>
