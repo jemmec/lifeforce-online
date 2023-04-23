@@ -11,6 +11,13 @@ NEXT_PUBLIC_SOCKET_IO_PASSPHRASE=swordfish
 
 When no users are present in a room, the room will "Stay-alive" for the specified TTL. The first user to join back into the room will be made "host".
 
+## Heroku
+
+Push socket-server to heroku app:
+```
+git subtree push --prefix socket-server heroku master
+```
+
 ## Todo
 
 - Include manual typing of `roomId`
