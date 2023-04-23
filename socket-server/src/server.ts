@@ -63,6 +63,8 @@ function p(log: string) {
 
 function findRoom(roomId: string, onFound: (room: Room) => void) {
 
+  console.log("Finding room");
+
 }
 
 
