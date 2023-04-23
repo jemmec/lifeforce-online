@@ -7,7 +7,7 @@ const app = new Koa();
 const httpServer = createServer(app.callback());
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   },
 });
 
@@ -209,7 +209,7 @@ io.on('connection', socket => {
 
 });
 
-httpServer.listen(3001);
+httpServer.listen(process.env.PORT || 3001);
 
 p("Running server at http://localhost:3001/");
 
