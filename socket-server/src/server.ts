@@ -3,6 +3,8 @@ import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { Room, Settings, RoomError, User } from './types';
 
+require('dotenv').config();
+
 const app = new Koa();
 const httpServer = createServer(app.callback());
 const io = new Server(httpServer, {
@@ -11,7 +13,7 @@ const io = new Server(httpServer, {
   },
 });
 
-const passphrase = "swordfish";
+const passphrase = process.env.PASSPHRASE || "swordfish";
 
 const planeswalkers = [
   "Jace Beleren",
@@ -209,9 +211,10 @@ io.on('connection', socket => {
 
 });
 
-httpServer.listen(process.env.PORT || 3001);
+httpServer.listen(process.env.PORT || 8080, () => {
+  p("Server started!");
+});
 
-p("Running server at http://localhost:3001/");
 
 //Middleware
 
